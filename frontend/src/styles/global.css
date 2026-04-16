@@ -1,0 +1,341 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Single source of truth for main content width + horizontal gutter (aligned to My Vehicles page) */
+:root {
+  --layout-content-max-width: 1200px;
+  --layout-inline-padding: 0.5rem;
+
+  /* Shared form tokens (Register Vehicle page for now) */
+  --form-control-font-size: 0.875rem;
+  --form-control-padding-y: 0.55rem;
+  --form-control-padding-x: 0.75rem;
+  --form-control-border-radius: 0.375rem;
+  --form-label-font-size: 0.875rem;
+  --form-label-margin-bottom: 0.25rem;
+  --form-control-border-color: #d1d5db;
+  --form-control-text: #111827;
+  --form-control-placeholder: #9ca3af;
+  --form-control-focus-border: #1e40af;
+  --form-control-focus-ring: 0 0 0 3px rgba(30, 64, 175, 0.1);
+
+  /* Room for the dropdown chevron */
+  --form-select-padding-right: 2.25rem;
+  --form-select-chevron-color: #6b7280;
+
+  /* Shared form CTA sizing */
+  --form-button-font-size: 0.9rem;
+  --form-button-padding-y: 0.45rem;
+  --form-button-padding-x: 1rem;
+  --form-button-border-radius: 0.375rem;
+  --form-primary-bg: #1c3ca6;
+  --form-primary-bg-hover: #1b3681;
+  --form-secondary-bg: #f7f7f7;
+  --form-secondary-border: #c4ccd8;
+  --form-secondary-text: #1f2937;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --layout-inline-padding: 0;
+  }
+}
+
+html {
+  font-family: 'Lato', Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Avoid layout shift when vertical scrollbar appears on long pages (e.g. Register Vehicle) */
+  scrollbar-gutter: stable;
+}
+
+/* Single inner column for dashboard pages (navbar + main share the same max-width math) */
+.layout-page-inner {
+  max-width: var(--layout-content-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .layout-page-inner {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: inherit;
+  background-color: #f3f4f6;
+}
+
+#root {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Shared form primitives */
+.ui-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ui-form-group.ui-full-width {
+  grid-column: 1 / -1;
+}
+
+.ui-label {
+  font-size: var(--form-label-font-size);
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: var(--form-label-margin-bottom);
+}
+
+.ui-required {
+  color: #ff003d;
+  margin-left: 0.25rem;
+}
+
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: var(--form-control-padding-y) var(--form-control-padding-x);
+  border: 1px solid var(--form-control-border-color);
+  border-radius: var(--form-control-border-radius);
+  font-size: var(--form-control-font-size);
+  color: var(--form-control-text);
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.ui-input::placeholder,
+.ui-textarea::placeholder {
+  color: var(--form-control-placeholder);
+}
+
+.ui-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: var(--form-select-padding-right);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2721%27%20height%3D%2721%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M6%208%2010%2012%2014%208%27%20fill%3D%27none%27%20stroke%3D%27%236b7280%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem 1rem;
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  outline: none;
+  border-color: var(--form-control-focus-border);
+  box-shadow: var(--form-control-focus-ring);
+}
+
+.ui-input:disabled,
+.ui-select:disabled,
+.ui-textarea:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ui-input.ui-error,
+.ui-select.ui-error,
+.ui-textarea.ui-error {
+  border-color: #ef4444;
+}
+
+.ui-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1.25rem;
+}
+
+.ui-btn-primary,
+.ui-btn-secondary {
+  padding: var(--form-button-padding-y) var(--form-button-padding-x);
+  font-size: var(--form-button-font-size);
+  font-weight: 600;
+  border-radius: var(--form-button-border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.ui-btn-primary {
+  border: 1px solid var(--form-primary-bg);
+  background: var(--form-primary-bg);
+  color: #ffffff;
+}
+
+.ui-btn-primary:hover:not(:disabled) {
+  border-color: var(--form-primary-bg-hover);
+  background: var(--form-primary-bg-hover);
+}
+
+.ui-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ui-btn-secondary {
+  border: 1px solid var(--form-secondary-border);
+  background: var(--form-secondary-bg);
+  color: var(--form-secondary-text);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+}
+
+.ui-btn-secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+/* Card button variables (browse cards, appointments, auctions — not form CTAs) */
+:root {
+  --card-btn-font-size: 0.875rem;
+  --card-btn-padding-y: 0.48rem;
+  --card-btn-padding-x: 0.85rem;
+  --card-btn-border-radius: 0.6rem;
+  --card-btn-font-weight: 600;
+  --card-btn-transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  /* Primary on cards = tinted blue (main CTA: Book, Accept, Place bid, etc.) */
+  --card-btn-primary-border: rgba(37, 99, 235, 0.28);
+  --card-btn-primary-bg: rgba(37, 99, 235, 0.08);
+  --card-btn-primary-text: #1d4ed8;
+  --card-btn-primary-border-hover: rgba(37, 99, 235, 0.45);
+  --card-btn-primary-bg-hover: rgba(37, 99, 235, 0.12);
+  /* Secondary on cards = neutral gray (View details, Prev/Next, cancel on cards) */
+  --card-btn-secondary-border: #d1d5db;
+  --card-btn-secondary-bg: #ffffff;
+  --card-btn-secondary-text: #374151;
+  --card-btn-secondary-border-hover: #9ca3af;
+  --card-btn-secondary-bg-hover: #f3f4f6;
+}
+
+/* Compact icon-only actions (inventory cards, services offered cards, etc.) */
+.icon-btn {
+  border: 1px solid #c4c6ca;
+  background: #ffffff;
+  border-radius: 0.6rem;
+  height: 34px;
+  width: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #d1d5db;
+}
+
+.icon-btn.danger {
+  color: #b91c1c;
+}
+
+.icon-btn.danger:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+/* Card button classes for consistent styling */
+.card-btn-primary,
+.card-btn-secondary {
+  padding: var(--card-btn-padding-y) var(--card-btn-padding-x);
+  font-size: var(--card-btn-font-size);
+  font-weight: var(--card-btn-font-weight);
+  border-radius: var(--card-btn-border-radius);
+  cursor: pointer;
+  transition: var(--card-btn-transition);
+  font-family: inherit;
+  border: 1px solid transparent;
+  width: auto;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.card-btn-primary {
+  border: 1px solid var(--card-btn-primary-border);
+  background: var(--card-btn-primary-bg);
+  color: var(--card-btn-primary-text);
+  box-shadow: none;
+}
+
+.card-btn-primary:hover:not(:disabled) {
+  border-color: var(--card-btn-primary-border-hover);
+  background: var(--card-btn-primary-bg-hover);
+  color: #1e40af;
+}
+
+.card-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.card-btn-secondary {
+  border: 1px solid var(--card-btn-secondary-border);
+  background: var(--card-btn-secondary-bg);
+  color: var(--card-btn-secondary-text);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+}
+
+.card-btn-secondary:hover:not(:disabled) {
+  border-color: var(--card-btn-secondary-border-hover);
+  background: var(--card-btn-secondary-bg-hover);
+  color: #111827;
+}
+
+.card-btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 640px) {
+  .ui-btn-primary,
+  .ui-btn-secondary,
+  .card-btn-primary,
+  .card-btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .ui-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .ui-btn-primary,
+  .ui-btn-secondary {
+    width: 100%;
+  }
+}

@@ -1,0 +1,83 @@
+/* Toast Notification Overrides */
+.Toastify__toast-container {
+  top: 60px !important;
+  right: 20px !important;
+}
+
+.Toastify__toast {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  font-family: inherit;
+}
+
+.Toastify__toast--success {
+  background: #10b981;
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: #ef4444;
+  color: white;
+}
+
+.Toastify__toast--info {
+  background: #3b82f6;
+  color: white;
+}
+
+.Toastify__toast--warning {
+  background: #f59e0b;
+  color: white;
+}
+
+/* Hide default react-toastify icons (they have specific classes) */
+.Toastify__toast-icon svg:not(.toast-icon-white) {
+  display: none !important;
+}
+
+/* Ensure custom icons are visible and properly styled - force white color */
+.Toastify__toast-icon > * {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Force all custom toast icons to be white */
+.toast-icon-white {
+  color: white !important;
+  stroke: white !important;
+  fill: none !important;
+}
+
+/* Target custom SVG icons inside toast icon container */
+.Toastify__toast-icon svg.toast-icon-white {
+  color: white !important;
+  stroke: white !important;
+  fill: none !important;
+}
+
+/* Also target any direct child SVG elements (lucide-react icons) */
+.Toastify__toast-icon > svg {
+  color: white !important;
+  stroke: white !important;
+  fill: none !important;
+}
+
+/* Make close button white */
+.Toastify__close-button {
+  color: white !important;
+  opacity: 1 !important;
+}
+
+.Toastify__close-button:hover {
+  opacity: 0.8 !important;
+}
+
+.Toastify__close-button svg {
+  fill: white !important;
+}
+
+.Toastify__progress-bar {
+  background: rgba(255, 255, 255, 0.3);
+}
+

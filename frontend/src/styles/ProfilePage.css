@@ -1,0 +1,224 @@
+.profile-main {
+  flex: 1;
+  background: #f3f4f6;
+  padding: 2.5rem var(--layout-inline-padding) 2.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+.profile-container {
+  max-width: var(--layout-content-max-width);
+}
+
+.profile-loading {
+  background: #fff;
+  border-radius: 0.9rem;
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+}
+
+.profile-header {
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+  border: 1px solid #e5e7eb;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0d1335;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-loading {
+  font-size: 0.9rem;
+}
+
+.profile-header-text h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #0f172a;
+}
+
+.profile-header-text p {
+  margin: 0.15rem 0 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.profile-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-card {
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 1.25rem 1.3rem;
+  box-shadow: 0 10px 24px -18px rgba(15, 23, 42, 0.35);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-card-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.profile-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.profile-grid.two-col {
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+}
+
+.profile-main .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.profile-main .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.cnic-image-group .cnic-image-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.55rem;
+  padding: 0.5rem;
+  background: #f9fafb;
+  max-width: 260px;
+}
+
+.cnic-image-group img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.35rem;
+}
+
+.profile-main .form-group label {
+  font-size: 0.9rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.profile-main .form-group input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.55rem;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  background-color: #ffffff;
+}
+
+.profile-main .form-group input:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.profile-main .form-group input:not(:disabled):focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background-color: #ffffff;
+}
+
+/* Visual difference when editing - active editing state */
+.profile-main .profile-card.editing .form-group input:not(:disabled) {
+  background-color: #ffffff;
+}
+
+.profile-main .profile-card.editing .form-group input:not(:disabled):focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.profile-main .primary-btn,
+.profile-main .secondary-btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 50px;
+  padding: 0px;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+}
+
+.profile-main .primary-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: 1px solid #2563eb;
+}
+
+.profile-main .primary-btn:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+.profile-main .secondary-btn {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.profile-main .secondary-btn:hover {
+  background: #e5e7eb;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .profile-main {
+    padding: 1.75rem var(--layout-inline-padding) 2.25rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .profile-sections {
+    grid-template-columns: 1fr;
+  }
+}
+

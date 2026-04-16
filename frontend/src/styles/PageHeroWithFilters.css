@@ -1,0 +1,237 @@
+/* Hero Section */
+.page-hero {
+  /* Single source of truth for filter bar width across all PageHeroWithFilters usages */
+  --page-filters-pill-max-width: 800px;
+  background: linear-gradient(180deg, #000d1d 5%, #013572 95%);
+  color: #ffffff;
+  border-radius: 0.9rem;
+  padding: 2.6rem 2rem 2.2rem;
+  box-shadow: 0 12px 25px -18px rgba(15, 23, 42, 0.55);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-title {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.2rem 0;
+}
+
+.page-hero-subtitle {
+  font-size: 0.98rem;
+  color: #e5e7eb;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.page-hero-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.page-hero-actions .primary-btn {
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background-color: #11519a;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
+  width: auto;
+  min-width: auto;
+  max-width: none;
+}
+
+.page-hero-actions .primary-btn:hover {
+  background-color: #031f41;
+  box-shadow: 0 10px 20px -18px rgba(0, 0, 0, 0.6);
+  transform: translateY(-1px);
+}
+
+.page-hero-actions .advanced-filter-btn {
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
+}
+
+.page-hero-actions .advanced-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Filter Section */
+.page-filter-shell {
+  margin-top: 1.35rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.page-filters-pill {
+  background: rgb(255, 255, 255);
+  border-radius: 4px;
+  box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.65);
+  padding: 0.4rem 0.35rem;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0;
+  max-width: var(--page-filters-pill-max-width);
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.page-filter-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 0 0.55rem;
+}
+
+.page-filter-wide {
+  flex: 1.6;
+  min-width: 40%;
+}
+
+.page-filter-field:not(:last-child) {
+  border-right: 1px solid #e5e7eb;
+}
+
+.page-filter-control {
+  position: relative;
+}
+
+.page-filter-control input,
+.page-filter-control select {
+  width: 100%;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.86rem;
+  outline: none;
+  transition: box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.page-filter-control input[type="date"] {
+  cursor: pointer;
+  color-scheme: light;
+}
+
+.page-filter-control-date .page-date-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 0.5rem;
+  transform: translateY(-50%);
+  color: #535861;
+  pointer-events: none;
+  font-size: 0.86rem;
+  line-height: 1.2;
+}
+
+.page-filter-control-date input[type="date"].is-placeholder {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-filter-control-date input[type="date"].is-placeholder::-webkit-datetime-edit {
+  color: transparent;
+}
+
+.page-filter-control-date input[type="date"].is-placeholder::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+}
+
+.page-filter-control input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  margin-left: 0.25rem;
+}
+
+.page-filter-control input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.page-filter-control input:focus,
+.page-filter-control select:focus {
+  box-shadow: 0 0 0 2px rgba(1, 53, 114, 0.28);
+}
+
+.page-filter-control input::placeholder {
+  color: #535861;
+}
+
+/* Placeholder-like text color (search, select default "Any ...", date/number empty) */
+.page-filter-control input.is-placeholder {
+  color: #535861;
+}
+
+.page-filter-control select {
+  color: #0f172a;
+}
+
+.page-filter-control select.is-placeholder {
+  color: #535861;
+}
+
+.page-filter-control select option {
+  color: inherit;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .page-hero {
+    border-radius: 0; /* hero occupies full width like reference on small screens */
+  }
+
+  .page-hero-actions {
+    flex-direction: column;
+  }
+
+  .page-filter-shell {
+    margin-top: 1rem;
+    padding: 0 0.25rem;
+  }
+
+  .page-filters-pill {
+    max-width: 100%;
+    border-radius: 10px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-filter-field {
+    min-width: 100%;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .page-filter-field:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .page-filter-wide {
+    flex: 1;
+    min-width: 100%;
+  }
+}
+

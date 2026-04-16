@@ -1,0 +1,200 @@
+/* Service History Page Styles */
+.service-history-main {
+  flex: 1;
+  background: #f3f4f6;
+  padding: 2.5rem var(--layout-inline-padding) 2.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+.service-history-container {
+  width: 100%;
+}
+
+.service-history-body {
+  margin-top: 1.25rem;
+}
+
+/* Loading and Empty States */
+.service-history-loading,
+.service-history-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+  font-size: 1rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.service-history-empty .empty-hint {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+}
+
+/* Stats Section */
+.service-history-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+}
+
+.stat-item {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Service Records Grid */
+.service-records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+}
+
+/* Service Record Card */
+.service-record-card {
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-record-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.service-card-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.service-card-vehicle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.service-card-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.service-card-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.service-card-value.chassis-number {
+  font-family: 'Courier New', monospace;
+  color: #2563eb;
+}
+
+.service-card-body {
+  flex: 1;
+  margin-bottom: 1.25rem;
+}
+
+.service-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.service-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.service-info-label {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.service-info-value {
+  font-size: 0.9375rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+.service-info-value.amount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #059669;
+}
+
+.service-card-actions {
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.view-details-btn {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: #1e40af;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.view-details-btn:hover {
+  background: #1e3a8a;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+}
+
+.view-details-btn:active {
+  transform: scale(0.98);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .service-history-main {
+    padding: 1.75rem var(--layout-inline-padding) 2.25rem;
+  }
+
+  .service-records-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-history-stats {
+    grid-template-columns: 1fr;
+  }
+}
+

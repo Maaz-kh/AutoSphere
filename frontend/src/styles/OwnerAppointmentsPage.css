@@ -1,0 +1,122 @@
+.owner-appointments-main {
+  flex: 1;
+  background: #f3f4f6;
+  padding: 1.75rem var(--layout-inline-padding) 2.5rem;
+}
+
+.owner-appointments-body {
+  margin-top: 1.25rem;
+}
+
+.owner-appointments-card {
+  background: white;
+  border-radius: 0.9rem;
+  padding: 1.1rem;
+  box-shadow: 0 12px 25px -18px rgba(15, 23, 42, 0.35);
+}
+
+.owner-appointments-empty {
+  padding: 1.4rem 0.5rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.owner-appointments-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+@media (max-width: 980px) {
+  .owner-appointments-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .owner-appointments-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.owner-appointment-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+  padding: 0.95rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.owner-appointment-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 10px 20px -18px rgba(15, 23, 42, 0.55);
+  transform: translateY(-1px);
+}
+
+.owner-appointment-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.owner-appointment-title {
+  font-weight: 700;
+  color: #111827;
+}
+
+.owner-appointment-meta {
+  color: #6b7280;
+  font-size: 0.88rem;
+  margin-top: 0.3rem;
+}
+
+.owner-appointment-status {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.status-pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.status-accepted { background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+.status-rejected { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.status-cancelled { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+.status-completed { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+
+.owner-appointment-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.55rem;
+  justify-content: flex-end;
+  align-self: flex-end;
+}
+
+.owner-review-modal {
+  max-width: 620px;
+}
+
+.owner-review-body {
+  padding: 1rem 1.25rem;
+}
+
+.owner-review-text {
+  border-radius: 0.6rem;
+  border: 1px solid #cbd5f1;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.93rem;
+  font-family: inherit;
+  outline: none;
+}
+
+.owner-review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+  padding: 1rem 1.25rem 1.2rem;
+}
+

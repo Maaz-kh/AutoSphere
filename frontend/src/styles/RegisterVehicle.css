@@ -1,0 +1,461 @@
+
+.register-vehicle-page .register-vehicle-main {
+  flex: 1;
+  background: #f3f4f6;
+  padding: 2.5rem var(--layout-inline-padding) 2.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+/* Width comes from parent .layout-page-inner (same column as My Vehicles) */
+.register-vehicle-page .register-vehicle-hero-container {
+  margin-bottom: 1.75rem;
+}
+.register-vehicle-page .register-vehicle-hero-container .page-hero {
+  min-height: 200px;
+}
+
+.register-vehicle-page .register-vehicle-form-container {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.register-vehicle-page .register-vehicle-form {
+  padding: 2rem;
+}
+
+.register-vehicle-page .form-section {
+  margin-bottom: 2rem;
+}
+
+.register-vehicle-page .form-section:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.register-vehicle-page .section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0c1233;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.register-vehicle-page .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.register-vehicle-page .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.register-vehicle-page .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.register-vehicle-page .form-group label {
+  font-size: var(--form-label-font-size);
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: var(--form-label-margin-bottom);
+}
+
+.register-vehicle-page .required {
+  color: #ff003d;
+  margin-left: 0.25rem;
+}
+
+.register-vehicle-page .form-group input,
+.register-vehicle-page .form-group select {
+  padding: var(--form-control-padding-y) var(--form-control-padding-x);
+  border: 1px solid #d1d5db;
+  border-radius: var(--form-control-border-radius);
+  font-size: var(--form-control-font-size);
+  color: #111827;
+  background: white;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: inherit;
+}
+
+.register-vehicle-page .form-group input:focus,
+.register-vehicle-page .form-group select:focus {
+  outline: none;
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* Custom select chevron spacing (prevents arrow from sitting on the border) */
+.register-vehicle-page .form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: var(--form-select-padding-right);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2721%27%20height%3D%2721%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M6%208%2010%2012%2014%208%27%20fill%3D%27none%27%20stroke%3D%27%236b7280%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem 1rem;
+}
+
+.register-vehicle-page .form-group select:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.register-vehicle-page .form-group input.error,
+.register-vehicle-page .form-group select.error {
+  border-color: #ff003d;
+}
+
+.register-vehicle-page .form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.register-vehicle-page .field-error {
+  font-size: 0.8125rem;
+  color: #ff003d;
+  margin-top: 0.25rem;
+}
+
+/* File Upload Styles */
+.file-upload-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.file-input-hidden {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.file-input {
+  padding: 0.75rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9375rem;
+}
+
+.file-input:hover {
+  border-color: #1e40af;
+  background: #f3f4f6;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.file-preview span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-file-btn {
+  background: #ff003d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.125rem;
+  line-height: 1;
+  margin-left: 0.75rem;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.remove-file-btn:hover {
+  background: #cc002e;
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-hint {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.section-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: -0.5rem 0 1rem 0;
+}
+
+/* Vehicle Images – row-wise cards (same as Damage Detection / Create Auction) */
+.vehicle-images-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.vehicle-image-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vehicle-image-slot .file-input-hidden {
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.vehicle-image-slot label:first-child {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Image dropzone tiles */
+.image-dropzone {
+  border: 2px dashed #d1d5db;
+  background: #f3f4f6;
+  border-radius: 0.75rem;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-dropzone.is-dragover {
+  border-color: #1e40af;
+  background: #eef2ff;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+
+.image-dropzone.has-error {
+  border-color: #ff003d;
+}
+
+.image-dropzone-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4b5563;
+}
+
+.image-dropzone-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.1;
+}
+
+.image-dropzone-subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.1;
+  margin-top: 0.2rem;
+}
+
+.vehicle-image-slot .image-preview-item {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: none;
+  width: 100%;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.vehicle-image-slot .preview-image {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.vehicle-image-slot .image-number {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.vehicle-image-slot .remove-image-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vehicle-image-slot .remove-image-btn:hover {
+  background: #dc2626;
+}
+
+/* File upload buttons (Documents section) */
+.btn-upload-file {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-upload-file:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-upload-file:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+
+/* Form Actions */
+.register-vehicle-page .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1.25rem;
+}
+
+.register-vehicle-page .btn-primary,
+.register-vehicle-page .btn-secondary {
+  padding: var(--form-button-padding-y) var(--form-button-padding-x);
+  font-size: var(--form-button-font-size);
+  font-weight: 600;
+  border-radius: var(--form-button-border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+}
+
+.register-vehicle-page .btn-primary {
+  background: #1e40af;
+  color: white;
+}
+
+.register-vehicle-page .btn-primary:hover:not(:disabled) {
+  background: #1e3a8a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.register-vehicle-page .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.register-vehicle-page .btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.register-vehicle-page .btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .register-vehicle-page .register-vehicle-main {
+    padding: 1.75rem var(--layout-inline-padding) 2.25rem;
+  }
+
+  .register-vehicle-page .register-vehicle-hero-container {
+    margin: 0;
+  }
+
+  .register-vehicle-page .register-vehicle-form-container {
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .register-vehicle-page .register-vehicle-form {
+    padding: 1.5rem;
+  }
+
+  .register-vehicle-page .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .register-vehicle-page .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .register-vehicle-page .btn-primary,
+  .register-vehicle-page .btn-secondary {
+    width: 100%;
+  }
+
+  .register-vehicle-page .vehicle-images-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

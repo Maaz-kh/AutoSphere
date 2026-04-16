@@ -1,0 +1,377 @@
+.vehicle-details-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 2rem;
+  font-family: inherit;
+}
+
+.vehicle-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.vehicle-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+.vehicle-details-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.close-page-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.close-page-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.vehicle-details-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.vehicle-image-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-viewer {
+  position: relative;
+  width: 100%;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.vehicle-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 10;
+  color: #374151;
+}
+
+.image-nav-btn:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #111827;
+}
+
+.image-nav-btn.prev {
+  left: 1rem;
+}
+
+.image-nav-btn.next {
+  right: 1rem;
+}
+
+.image-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.indicator-dot.active {
+  background: #2563eb;
+  width: 24px;
+  border-radius: 4px;
+}
+
+.image-label {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.no-image-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  color: #6b7280;
+}
+
+.vehicle-attributes-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-section {
+  margin-bottom: 0;
+  background: #f9fafb;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
+}
+
+.detail-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-label {
+  font-size: 0.88rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.vehicle-details-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+}
+
+.vehicle-details-actions--center {
+  justify-content: center;
+  width: 100%;
+}
+
+.vehicle-details-actions--center .ui-btn-primary {
+  width: auto;
+  min-width: 12rem;
+}
+
+/* Public auction detail: place bid uses form controls; submit aligned right, modest width */
+.public-auction-bid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.public-auction-bid-submit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.public-auction-bid-submit-row .ui-btn-primary {
+  width: auto;
+  min-width: 9rem;
+  max-width: 14rem;
+}
+
+.vehicle-details-page .primary-btn {
+  width: 50%;
+  padding: 0.5rem 0.7rem;
+  background: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vehicle-details-page .primary-btn:hover {
+  background: #1e3a8a;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.28);
+}
+
+/* Card CTAs on auction detail pages (global .card-btn-* + width) */
+.vehicle-details-page .card-btn-primary,
+.vehicle-details-page .card-btn-secondary {
+  width: 50%;
+}
+
+.vehicle-details-page .secondary-btn {
+  width: 50%;
+  padding: 0.75rem 1rem;
+  background: #eef2f7;
+  color: #1f2937;
+  border: 1px solid #c4ccd8;
+  border-radius: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vehicle-details-page .secondary-btn:hover {
+  background: #e2e8f0;
+  border-color: #94a3b8;
+}
+
+.vehicle-details-loading,
+.vehicle-details-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.vehicle-details-error p {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .vehicle-details-page {
+    padding: 1rem;
+  }
+
+  .vehicle-details-header {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .vehicle-details-title {
+    font-size: 1.5rem;
+  }
+
+  .vehicle-details-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .vehicle-details-actions {
+    flex-direction: column;
+  }
+
+  .vehicle-details-actions--center {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .public-auction-bid-submit-row {
+    justify-content: stretch;
+  }
+
+  .public-auction-bid-submit-row .ui-btn-primary {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .vehicle-details-actions--center .ui-btn-primary {
+    width: 100%;
+    max-width: 18rem;
+  }
+
+  .vehicle-details-page .primary-btn,
+  .vehicle-details-page .secondary-btn,
+  .vehicle-details-page .card-btn-primary,
+  .vehicle-details-page .card-btn-secondary {
+    width: 100%;
+  }
+}
+
+/* Dashboard shell: public auction detail (aligned with My Vehicles column) */
+.public-auction-detail-main {
+  flex: 1;
+  background: #f3f4f6;
+  padding: 2.5rem var(--layout-inline-padding) 2.5rem;
+  min-height: calc(100vh - 64px);
+}
+
+.vehicle-details-page--dashboard {
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  .public-auction-detail-main {
+    padding: 1.75rem var(--layout-inline-padding) 2.25rem;
+  }
+}
+
