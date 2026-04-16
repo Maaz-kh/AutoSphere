@@ -4,6 +4,7 @@
 !.env.example
 !.env.sample
 !.env*.example
+!backend/.env.example
 
 # --- Dependencies ---
 node_modules/
@@ -55,3 +56,6 @@ temp/
 
 # Optional: local uploads if you ever switch off cloud storage
 uploads/
+
+# TLS CA bundles (e.g. TiDB Cloud); keep paths in .env only
+backend/certs/*.pem

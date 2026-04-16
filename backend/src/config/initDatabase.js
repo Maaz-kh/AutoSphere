@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
+const { getMysqlSslOptions } = require('./mysqlSsl');
 
 const columnExists = async (connection, tableName, columnName) => {
   const [rows] = await connection.query(
@@ -72,11 +73,13 @@ const migrateWorkshopAppointmentsToMultiService = async (connection) => {
 const initDatabase = async () => {
   try {
     // Connect without database to create it
+    const ssl = getMysqlSslOptions();
     const connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      port: process.env.DB_PORT
+      port: process.env.DB_PORT,
+      ...(ssl ? { ssl } : {})
     });
 
     console.log('Connected to MySQL server');

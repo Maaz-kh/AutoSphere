@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 require('dotenv').config();
+const { getMysqlSslOptions } = require('./mysqlSsl');
 
 class Database {
   constructor() {
@@ -78,6 +79,7 @@ class Database {
 
   async initialize() {
     try {
+      const ssl = getMysqlSslOptions();
       this.pool = mysql.createPool({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
@@ -86,7 +88,8 @@ class Database {
         port: process.env.DB_PORT,
         waitForConnections: true,
         connectionLimit: 10,
-        queueLimit: 0
+        queueLimit: 0,
+        ...(ssl ? { ssl } : {})
       });
 
       await this.testConnection();
