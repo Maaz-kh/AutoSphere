@@ -66,6 +66,12 @@ router.delete(
   authMiddleware.authorize('vehicle_owner', 'admin'),
   auctionController.deleteDraft.bind(auctionController)
 );
+router.post(
+  '/my-auctions/:auctionId/end',
+  authMiddleware.authenticate(),
+  authMiddleware.authorize('vehicle_owner', 'admin'),
+  auctionController.endAuctionEarly.bind(auctionController)
+);
 
 // Must be before /:auctionId or "upload-config" is matched as auctionId
 router.get(

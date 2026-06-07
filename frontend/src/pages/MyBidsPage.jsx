@@ -15,6 +15,11 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest first' }
 ];
 
+function openBidAuctionDetailInNewTab(detailPath, auctionId) {
+  const path = `${detailPath}/${auctionId}`;
+  window.open(`${window.location.origin}${path}`, '_blank', 'noopener,noreferrer');
+}
+
 function formatCountdown(seconds) {
   if (seconds == null || seconds <= 0) return null;
   const d = Math.floor(seconds / 86400);
@@ -126,7 +131,7 @@ function BidCard({ auction, isOwner }) {
           <button
             type="button"
             className="card-btn-primary my-auction-card-btn"
-            onClick={() => navigate(detailPath)}
+            onClick={() => openBidAuctionDetailInNewTab(detailPath, auction.id)}
           >
             View details
           </button>

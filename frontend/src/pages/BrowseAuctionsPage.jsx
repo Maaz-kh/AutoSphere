@@ -32,6 +32,11 @@ const SORT_OPTIONS = [
   { value: 'most_bids', label: 'Most bids' }
 ];
 
+function openAuctionDetailInNewTab(detailPathPrefix, auctionId) {
+  const path = `${detailPathPrefix}/${auctionId}`;
+  window.open(`${window.location.origin}${path}`, '_blank', 'noopener,noreferrer');
+}
+
 function formatCountdown(seconds) {
   if (seconds == null || seconds <= 0) return null;
   const d = Math.floor(seconds / 86400);
@@ -47,7 +52,6 @@ function formatCountdown(seconds) {
 }
 
 function BrowseAuctionCard({ auction, detailPath, onPlaceBid, onToggleWatchlist, isLoggedIn }) {
-  const navigate = useNavigate();
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   if (!auction) return null;
   const endAt = auction.end_at ? new Date(auction.end_at) : null;
@@ -145,7 +149,7 @@ function BrowseAuctionCard({ auction, detailPath, onPlaceBid, onToggleWatchlist,
         <button
           type="button"
           className="card-btn-secondary my-auction-card-btn"
-          onClick={() => navigate(`${detailPath}/${auction.id}`)}
+          onClick={() => openAuctionDetailInNewTab(detailPath, auction.id)}
         >
           View details
         </button>

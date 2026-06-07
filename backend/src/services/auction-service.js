@@ -3,6 +3,7 @@ const TransactionRepository = require('../repositories/transaction-repository');
 const VehicleRepository = require('../repositories/vehicle-repository');
 const UserRepository = require('../repositories/user-repository');
 const EmailService = require('./email-service');
+const TransactionService = require('./transaction-service');
 const database = require('../config/database');
 
 const AUCTION_PHOTOS_MIN = 5;
@@ -21,6 +22,7 @@ class AuctionService {
     this.vehicleRepository = VehicleRepository;
     this.userRepository = UserRepository;
     this.emailService = EmailService;
+    this.transactionService = TransactionService;
   }
 
   getMinimumNextBid(auction) {
@@ -327,6 +329,18 @@ class AuctionService {
       throw new Error('Only draft auctions can be deleted.');
     }
     await this.auctionRepository.delete(auctionId);
+  }
+
+  async endAuctionEarly(auctionId, userId, userRole) {
+    const auction = await this.auctionRepository.findByIdWithVehicle(auctionId);
+    if (!auction) throw new Error('Auction not found.');
+    if (auction.status !== 'active') throw new Error('Only active auctions can be ended early.');
+    const isOwner = auction.seller_id === userId;
+    const isAdmin = userRole === 'admin';
+    if (!isOwner && !isAdmin) {
+      throw new Error('Only the seller or admin can end this auction.');
+    }
+    return await this.transactionService.endAuctionEarly(auctionId, userId);
   }
 
   /**

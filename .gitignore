@@ -1,10 +1,10 @@
-# --- Environment & secrets (never commit) ---
+# --- Environment & secrets ---
 .env
 .env.*
 !.env.example
 !.env.sample
 !.env*.example
-!backend/.env.example
+!**/.env.example
 
 # --- Dependencies ---
 node_modules/
@@ -45,7 +45,7 @@ Desktop.ini
 *.sln
 *.sw?
 
-# VS Code (keep extensions.json if you want shared recommendations committed)
+# VS Code 
 .vscode/*
 !.vscode/extensions.json
 
@@ -54,8 +54,41 @@ tmp/
 temp/
 .cache/
 
-# Optional: local uploads if you ever switch off cloud storage
+# local uploads 
 uploads/
 
-# TLS CA bundles (e.g. TiDB Cloud); keep paths in .env only
+# TLS CA bundles 
 backend/certs/*.pem
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# --- ML model weights & training artifacts ---
+*.pt
+*.pth
+*.pkl
+*.onnx
+*.h5
+*.hdf5
+trained_model/
+catboost_info/
+runs/
+*.tfevents.*
+
+# --- Hardhat / Solidity ---
+blockchain/blockchain/artifacts/
+blockchain/blockchain/cache/
+blockchain/blockchain/typechain-types/
+
+# --- Large datasets & papers ---
+*.pdf
+data/raw/
+data/cleaned/
+
+# --- Stray / local tooling ---
+blockchain/npx
+.cursor/

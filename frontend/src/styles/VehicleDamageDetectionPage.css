@@ -28,22 +28,22 @@
 }
 
 .damage-detection-main .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #0c1233;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
+  padding-bottom: var(--form-section-title-padding-bottom);
+  border-bottom: var(--form-section-title-border);
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.subsection-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0c1233;
-  margin: 0 0 1rem 0;
+.damage-detection-main .subsection-title {
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
 }
 
 /* Upload Area */

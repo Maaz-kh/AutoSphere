@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 import DashboardNavbar from '../components/DashboardNavbar';
 import PageHeroWithFilters from '../components/PageHeroWithFilters';
+import ConfirmModal from '../components/ConfirmModal';
 import { apiClient } from '../services/api';
 import '../styles/PartModal.css';
 import '../styles/OwnerAppointmentsPage.css';
@@ -15,6 +16,8 @@ const OwnerAppointmentsPage = () => {
   const [reviewTarget, setReviewTarget] = useState(null);
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: '5', comment: '' });
+  const [cancelConfirm, setCancelConfirm] = useState(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -34,16 +37,19 @@ const OwnerAppointmentsPage = () => {
     load();
   }, [load]);
 
-  const cancelAppointment = async (id) => {
-    const ok = window.confirm('Cancel this appointment request?');
-    if (!ok) return;
+  const handleConfirmCancelAppointment = async () => {
+    if (!cancelConfirm?.id) return;
+    setCancelLoading(true);
     try {
-      await apiClient.patch(`/workshops/owner/appointments/${id}/cancel`);
+      await apiClient.patch(`/workshops/owner/appointments/${cancelConfirm.id}/cancel`);
       toast.success('Appointment cancelled.');
+      setCancelConfirm(null);
       await load();
     } catch (error) {
       const msg = error?.response?.data?.message || error?.message || 'Failed to cancel appointment.';
       toast.error(msg);
+    } finally {
+      setCancelLoading(false);
     }
   };
 
@@ -119,7 +125,18 @@ const OwnerAppointmentsPage = () => {
                           )}
                       <div className="owner-appointment-actions">
                         {['pending', 'accepted'].includes(a.status) && (
-                          <button type="button" className="card-btn-secondary" onClick={() => cancelAppointment(a.id)}>Cancel</button>
+                          <button
+                            type="button"
+                            className="card-btn-secondary"
+                            onClick={() =>
+                              setCancelConfirm({
+                                id: a.id,
+                                workshop_name: a.workshop_name || null
+                              })
+                            }
+                          >
+                            Cancel
+                          </button>
                         )}
                         {a.status === 'completed' && !a.review_id && (
                           <button
@@ -143,6 +160,19 @@ const OwnerAppointmentsPage = () => {
           </div>
         </div>
       </main>
+
+      <ConfirmModal
+        isOpen={cancelConfirm != null}
+        title="Cancel this appointment?"
+        message="The workshop will see this booking as cancelled. You can book again later if you change your mind."
+        detail={cancelConfirm?.workshop_name ? `Workshop: ${cancelConfirm.workshop_name}` : undefined}
+        confirmLabel="Yes, cancel appointment"
+        cancelLabel="Keep appointment"
+        variant="danger"
+        isLoading={cancelLoading}
+        onClose={() => !cancelLoading && setCancelConfirm(null)}
+        onConfirm={handleConfirmCancelAppointment}
+      />
 
       {reviewTarget && (
         <div className="modal-overlay" onClick={() => !reviewSubmitting && setReviewTarget(null)}>

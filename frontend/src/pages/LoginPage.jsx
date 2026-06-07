@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
-import logoImage from '../assets/autosphere_logo.png';
+import logoImage from '../assets/autosphere_logo_main.png';
 import '../styles/AuthForms.css';
 
 const LoginPage = () => {

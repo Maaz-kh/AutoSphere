@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AuthLayout from '../components/AuthLayout';
 import { apiClient } from '../services/api';
-import logoImage from '../assets/autosphere_logo.png';
+import logoImage from '../assets/autosphere_logo_main.png';
 import '../styles/AuthForms.css';
 
 const GOOGLE_MAPS_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
@@ -619,14 +619,14 @@ const RegisterPage = () => {
                               <input
                                 type="number"
                                 min="0"
-                                placeholder="Min"
+                                placeholder="Min Price"
                                 value={prices.price_min}
                                 onChange={(e) => setSelectedServices((prev) => ({ ...prev, [String(s.id)]: { ...prev[String(s.id)], price_min: e.target.value } }))}
                               />
                               <input
                                 type="number"
                                 min="0"
-                                placeholder="Max"
+                                placeholder="Max Price"
                                 value={prices.price_max}
                                 onChange={(e) => setSelectedServices((prev) => ({ ...prev, [String(s.id)]: { ...prev[String(s.id)], price_max: e.target.value } }))}
                               />

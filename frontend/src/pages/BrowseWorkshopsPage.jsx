@@ -34,6 +34,12 @@ const formatDistance = (km) => {
   return `${n.toFixed(1)} km`;
 };
 
+/** `datetime-local` min value in local timezone (minute precision). */
+const formatDatetimeLocalMin = (date) => {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
 const BrowseWorkshopsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -257,13 +263,27 @@ const BrowseWorkshopsPage = () => {
       toast.error('Please select a vehicle.');
       return;
     }
+    const preferredRaw = (bookingForm.preferred_at || '').trim();
+    if (!preferredRaw) {
+      toast.error('Please choose a preferred date and time.');
+      return;
+    }
+    const preferredAt = new Date(preferredRaw);
+    if (Number.isNaN(preferredAt.getTime())) {
+      toast.error('Please enter a valid preferred date and time.');
+      return;
+    }
+    if (preferredAt.getTime() <= Date.now()) {
+      toast.error('Preferred date and time must be in the future.');
+      return;
+    }
     setBookingSubmitting(true);
     try {
       await apiClient.post('/workshops/owner/appointments', {
         workshop_id: bookingWorkshop.id,
         vehicle_id: Number(bookingForm.vehicle_id),
         requested_service_ids: bookingForm.requested_service_ids.length > 0 ? bookingForm.requested_service_ids : null,
-        preferred_at: bookingForm.preferred_at || null,
+        preferred_at: preferredAt.toISOString(),
         notes: bookingForm.notes?.trim() || null
       });
       toast.success('Appointment request submitted.');
@@ -467,10 +487,11 @@ const BrowseWorkshopsPage = () => {
                   </div>
 
                   <div className="modal-field">
-                    <label htmlFor="booking_time">Preferred date & time</label>
+                    <label htmlFor="booking_time">Preferred date & time *</label>
                     <input
                       id="booking_time"
                       type="datetime-local"
+                      min={formatDatetimeLocalMin(new Date())}
                       value={bookingForm.preferred_at}
                       onChange={(e) => setBookingForm((p) => ({ ...p, preferred_at: e.target.value }))}
                     />

@@ -6,35 +6,60 @@
 }
 
 .transaction-container {
-  max-width: 800px;
+  max-width: 52rem;
   margin: 0 auto;
 }
 
-.transaction-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 1.25rem;
-  padding: 0.35rem 0;
-  font-size: 0.9rem;
-  color: #4b5563;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: color 0.2s;
-}
-
-.transaction-back:hover {
-  color: #111827;
-}
-
 .transaction-card {
-  padding: 1.75rem;
+  padding: 1.75rem 2rem;
 }
 
-.transaction-header {
+.transaction-card--empty {
+  max-width: 28rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.transaction-card--empty p {
+  margin: 0 0 1rem 0;
+  color: #4b5563;
+}
+
+.transaction-card--empty .ui-btn-primary {
+  margin-top: 0.25rem;
+}
+
+.transaction-card-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem 1.25rem;
   margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.transaction-card-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-header-back {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+@media (max-width: 640px) {
+  .transaction-card-header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .transaction-header-back {
+    align-self: flex-end;
+    width: auto;
+  }
 }
 
 .transaction-title {
@@ -143,69 +168,53 @@
 }
 
 .transaction-actions-row {
-  padding: 1rem 0;
+  padding: 1.25rem 0 0;
   border-top: 1px solid #e5e7eb;
+  margin-top: 0.5rem;
 }
 
 .transaction-prompt {
   font-size: 0.95rem;
   color: #4b5563;
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 1rem 0;
 }
 
-.transaction-actions-split {
+.transaction-actions-bar {
   display: flex;
-  gap: 0.75rem;
   flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.transaction-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
+.transaction-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
-.transaction-btn:disabled {
-  opacity: 0.6;
+.transaction-action-btn:disabled {
+  opacity: 0.55;
   cursor: not-allowed;
-}
-
-.btn-secondary.transaction-btn {
-  background: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-}
-
-.btn-secondary.transaction-btn:hover:not(:disabled) {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.primary-btn.transaction-btn {
-  background: #1e40af;
-  color: white;
-  border: 1px solid #1e40af;
-}
-
-.primary-btn.transaction-btn:hover:not(:disabled) {
-  background: #1e3a8a;
 }
 
 .transaction-section-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.75rem 0;
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
+  padding-bottom: var(--form-section-title-padding-bottom);
+  border-bottom: var(--form-section-title-border);
 }
 
 .transaction-checklist {
@@ -235,8 +244,17 @@
   accent-color: #1e40af;
 }
 
+.transaction-checklist-hint {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.45;
+}
+
 .transaction-confirm-row {
-  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
 .transaction-completed-msg {
@@ -316,11 +334,14 @@
 
 .transaction-messages-input-row {
   display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
   gap: 0.5rem;
 }
 
 .transaction-messages-input {
   flex: 1;
+  min-width: 12rem;
   padding: 0.6rem 0.75rem;
   font-size: 0.95rem;
   border: 1px solid #d1d5db;
@@ -335,9 +356,19 @@
 }
 
 .transaction-messages-send {
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .transaction-messages-send {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
 }

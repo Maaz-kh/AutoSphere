@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, FileText } from 'lucide-react';
 import DashboardNavbar from '../components/DashboardNavbar';
 import { apiClient } from '../services/api';
 import PageHeroWithFilters from '../components/PageHeroWithFilters';
@@ -95,24 +95,73 @@ const RegisterVehiclePage = () => {
     }
   };
 
+  const DOCUMENT_ACCEPT_LABEL = 'PDF, JPG, PNG, DOC, DOCX';
+
+  const isAcceptedDocumentFile = (file) => {
+    if (!file || !file.name) return false;
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    return ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'].includes(ext || '');
+  };
+
   const handleFileChange = (fieldName, e) => {
-    const selectedFiles = Array.from(e.target.files);
-    
+    const selectedFiles = Array.from(e.target.files || []);
+
+    if (fieldName === 'additional_documents') {
+      const accepted = selectedFiles.filter(isAcceptedDocumentFile);
+      if (accepted.length < selectedFiles.length) {
+        toast.warn(`Some files were skipped. Use ${DOCUMENT_ACCEPT_LABEL}.`);
+      }
+      setFiles((prev) => {
+        const merged = [...prev.additional_documents, ...accepted].slice(0, 5);
+        if (merged.length < prev.additional_documents.length + accepted.length) {
+          toast.info('Maximum 5 additional documents. Extra files were not added.');
+        }
+        return { ...prev, additional_documents: merged };
+      });
+      e.target.value = '';
+      if (errors.additional_documents) {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.additional_documents;
+          return next;
+        });
+      }
+      return;
+    }
+
     // Single file fields
-    if (fieldName === 'registration_certificate' || 
-        fieldName === 'front_image' || 
-        fieldName === 'back_image' || 
-        fieldName === 'interior_image') {
-      setFiles(prev => ({
+    if (
+      fieldName === 'registration_certificate' ||
+      fieldName === 'front_image' ||
+      fieldName === 'back_image' ||
+      fieldName === 'interior_image'
+    ) {
+      const file = selectedFiles[0] || null;
+      if (fieldName === 'registration_certificate' && file && !isAcceptedDocumentFile(file)) {
+        toast.warn(`Please choose a supported document type (${DOCUMENT_ACCEPT_LABEL}).`);
+        e.target.value = '';
+        return;
+      }
+      setFiles((prev) => ({
         ...prev,
-        [fieldName]: selectedFiles[0] || null
+        [fieldName]: file
       }));
+      if (fieldName === 'registration_certificate') {
+        e.target.value = '';
+      }
     } else {
-      // Multiple file fields
-      setFiles(prev => ({
+      setFiles((prev) => ({
         ...prev,
         [fieldName]: selectedFiles
       }));
+    }
+
+    if (errors[fieldName]) {
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[fieldName];
+        return next;
+      });
     }
   };
 
@@ -159,6 +208,80 @@ const RegisterVehiclePage = () => {
       handleDropFile(fieldName, file);
     }
   });
+
+  const registrationCertificateDropHandlers = {
+    onDragOver: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField('registration_certificate');
+    },
+    onDragEnter: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField('registration_certificate');
+    },
+    onDragLeave: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField((prev) => (prev === 'registration_certificate' ? null : prev));
+    },
+    onDrop: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField(null);
+      const file = e.dataTransfer?.files?.[0] || null;
+      if (!file) return;
+      if (!isAcceptedDocumentFile(file)) {
+        toast.warn(`Please drop a supported file (${DOCUMENT_ACCEPT_LABEL}).`);
+        return;
+      }
+      handleDropFile('registration_certificate', file);
+    }
+  };
+
+  const additionalDocumentsDropHandlers = {
+    onDragOver: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField('additional_documents');
+    },
+    onDragEnter: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField('additional_documents');
+    },
+    onDragLeave: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField((prev) => (prev === 'additional_documents' ? null : prev));
+    },
+    onDrop: (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOverField(null);
+      const incoming = Array.from(e.dataTransfer?.files || []).filter(isAcceptedDocumentFile);
+      if (incoming.length === 0) {
+        if ((e.dataTransfer?.files?.length || 0) > 0) {
+          toast.warn(`Please drop supported files only (${DOCUMENT_ACCEPT_LABEL}).`);
+        }
+        return;
+      }
+      setFiles((prev) => {
+        const merged = [...prev.additional_documents, ...incoming].slice(0, 5);
+        if (merged.length < prev.additional_documents.length + incoming.length) {
+          toast.info('Maximum 5 additional documents. Extra files were not added.');
+        }
+        return { ...prev, additional_documents: merged };
+      });
+      if (errors.additional_documents) {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.additional_documents;
+          return next;
+        });
+      }
+    }
+  };
 
   const removeFile = (fieldName, index = null) => {
     if (index !== null) {
@@ -771,81 +894,108 @@ const RegisterVehiclePage = () => {
               </div>
             </section>
 
-            {/* Documents Section */}
+            {/* Documents — same dropzone UX as Vehicle Images (Upload + Drag & drop + or click to upload) */}
             <section className="form-section">
               <h2 className="section-title">Documents</h2>
-              
-              <div className="form-grid">
-                <div className="form-group full-width">
+              <p className="section-hint">{DOCUMENT_ACCEPT_LABEL} (max 10MB each).</p>
+
+              <div className="register-documents-grid">
+                <div className="vehicle-image-slot">
                   <label htmlFor="registration_certificate">
-                    Registration Certificate <span className="required">*</span>
+                    Registration certificate <span className="required">*</span>
                   </label>
-                  <div className="file-upload-wrapper">
-                    <input
-                      ref={registrationCertInputRef}
-                      type="file"
-                      id="registration_certificate"
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      onChange={(e) => handleFileChange('registration_certificate', e)}
-                      className="file-input-hidden"
-                    />
-                    <button
-                      type="button"
-                      className="btn-upload-file"
-                      onClick={() => registrationCertInputRef.current?.click()}
-                    >
-                      Choose file
-                    </button>
-                    {files.registration_certificate && (
-                      <div className="file-preview">
-                        <span>{files.registration_certificate.name}</span>
+                  <input
+                    ref={registrationCertInputRef}
+                    type="file"
+                    id="registration_certificate"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    onChange={(e) => handleFileChange('registration_certificate', e)}
+                    className="file-input-hidden"
+                  />
+                  <div
+                    className={`image-dropzone ${dragOverField === 'registration_certificate' ? 'is-dragover' : ''} ${errors.registration_certificate ? 'has-error' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => registrationCertInputRef.current?.click()}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' || e.key === ' ' ? registrationCertInputRef.current?.click() : null
+                    }
+                    {...registrationCertificateDropHandlers}
+                    aria-label="Upload registration certificate"
+                  >
+                    {files.registration_certificate ? (
+                      <div className="image-preview-item register-document-preview-item">
+                        <div className="register-document-preview-body">
+                          <FileText size={36} strokeWidth={1.5} aria-hidden="true" />
+                          <span className="register-document-preview-filename" title={files.registration_certificate.name}>
+                            {files.registration_certificate.name}
+                          </span>
+                        </div>
                         <button
                           type="button"
-                          onClick={() => removeFile('registration_certificate')}
-                          className="remove-file-btn"
+                          className="remove-image-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFile('registration_certificate');
+                          }}
                           aria-label="Remove registration certificate"
                         >
-                          ×
+                          <X size={16} />
                         </button>
                       </div>
-                    )}
-                    {errors.registration_certificate && (
-                      <span className="field-error">{errors.registration_certificate}</span>
+                    ) : (
+                      <div className="image-dropzone-inner">
+                        <Upload size={20} aria-hidden="true" />
+                        <div className="image-dropzone-text">
+                          <div className="image-dropzone-title">Drag & drop</div>
+                          <div className="image-dropzone-subtitle">or click to upload</div>
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <p className="file-hint">PDF, JPG, PNG, DOC, DOCX (Max 10MB)</p>
+                  {errors.registration_certificate && (
+                    <span className="field-error">{errors.registration_certificate}</span>
+                  )}
                 </div>
 
-                <div className="form-group full-width">
+                <div className="vehicle-image-slot">
                   <label htmlFor="additional_documents">
-                    Additional Documents (Optional)
+                    Other documents <span className="register-document-optional">(Optional)</span>
                   </label>
-                  <div className="file-upload-wrapper">
-                    <input
-                      ref={additionalDocsInputRef}
-                      type="file"
-                      id="additional_documents"
-                      accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                      multiple
-                      onChange={(e) => handleFileChange('additional_documents', e)}
-                      className="file-input-hidden"
-                    />
-                    <button
-                      type="button"
-                      className="btn-upload-file"
-                      onClick={() => additionalDocsInputRef.current?.click()}
-                    >
-                      Choose files
-                    </button>
-                    {files.additional_documents.length > 0 && (
-                      <div className="file-list">
+                  <input
+                    ref={additionalDocsInputRef}
+                    type="file"
+                    id="additional_documents"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    multiple
+                    onChange={(e) => handleFileChange('additional_documents', e)}
+                    className="file-input-hidden"
+                  />
+                  <div
+                    className={`image-dropzone ${dragOverField === 'additional_documents' ? 'is-dragover' : ''} ${files.additional_documents.length > 0 ? 'register-additional-has-files' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => additionalDocsInputRef.current?.click()}
+                    onKeyDown={(e) =>
+                      e.key === 'Enter' || e.key === ' ' ? additionalDocsInputRef.current?.click() : null
+                    }
+                    {...additionalDocumentsDropHandlers}
+                    aria-label="Upload additional documents"
+                  >
+                    {files.additional_documents.length > 0 ? (
+                      <div className="register-additional-docs-list">
                         {files.additional_documents.map((file, index) => (
-                          <div key={index} className="file-preview">
-                            <span>{file.name}</span>
+                          <div key={`${file.name}-${index}`} className="register-additional-docs-row">
+                            <span className="register-additional-docs-name" title={file.name}>
+                              {file.name}
+                            </span>
                             <button
                               type="button"
-                              onClick={() => removeFile('additional_documents', index)}
-                              className="remove-file-btn"
+                              className="remove-file-btn register-additional-docs-remove"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeFile('additional_documents', index);
+                              }}
                               aria-label={`Remove ${file.name}`}
                             >
                               ×
@@ -853,9 +1003,16 @@ const RegisterVehiclePage = () => {
                           </div>
                         ))}
                       </div>
+                    ) : (
+                      <div className="image-dropzone-inner">
+                        <Upload size={20} aria-hidden="true" />
+                        <div className="image-dropzone-text">
+                          <div className="image-dropzone-title">Drag & drop</div>
+                          <div className="image-dropzone-subtitle">or click to upload</div>
+                        </div>
+                      </div>
                     )}
                   </div>
-                  <p className="file-hint">Up to 5 files (Max 10MB each)</p>
                 </div>
               </div>
             </section>

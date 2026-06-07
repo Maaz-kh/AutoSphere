@@ -203,10 +203,17 @@ class AuctionRepository extends BaseRepository {
    * Mark auction as ended.
    */
   async endAuction(auctionId) {
+    return this.endAuctionWithReason(auctionId, 'duration_elapsed', null);
+  }
+
+  /**
+   * Mark auction as ended with explicit reason and actor.
+   */
+  async endAuctionWithReason(auctionId, endReason = 'duration_elapsed', endedByUserId = null) {
     try {
       const result = await this.db.query(
-        "UPDATE auctions SET status = 'ended', end_reason = 'duration_elapsed', ended_at = NOW(), ended_by_user_id = NULL WHERE id = ? AND status = 'active'",
-        [auctionId]
+        "UPDATE auctions SET status = 'ended', end_reason = ?, ended_at = NOW(), end_at = NOW(), ended_by_user_id = ? WHERE id = ? AND status = 'active'",
+        [endReason, endedByUserId, auctionId]
       );
       return result && result.affectedRows > 0;
     } catch (error) {
@@ -293,7 +300,7 @@ class AuctionRepository extends BaseRepository {
   async findByIdForSeller(auctionId, sellerId) {
     try {
       const results = await this.db.query(
-        `SELECT a.*, v.make, v.model, v.variant, v.model_year, v.body_type, v.fuel_type, v.transmission_type,
+        `SELECT a.*, v.make, v.model, v.variant, v.model_year, v.registration_number, v.body_type, v.fuel_type, v.transmission_type,
                 v.engine_capacity, v.mileage_km, v.color, v.registered_city
          FROM auctions a
          JOIN vehicles v ON a.vehicle_id = v.id

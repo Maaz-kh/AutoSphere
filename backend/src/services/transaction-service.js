@@ -21,83 +21,115 @@ class TransactionService {
     const toEnd = await this.auctionRepository.findActiveToEnd();
     for (const auction of toEnd) {
       try {
-        if (await this.transactionRepository.transactionExists(auction.id)) {
-          await this.auctionRepository.endAuction(auction.id);
-          continue;
-        }
-
-        const reserveMet =
-          auction.reserve_price != null &&
-          auction.current_high_bid != null &&
-          parseFloat(auction.current_high_bid) >= parseFloat(auction.reserve_price);
-        const winnerId = auction.current_high_bidder_id
-          ? parseInt(auction.current_high_bidder_id, 10)
-          : null;
-        const finalAmount = auction.current_high_bid
-          ? parseFloat(auction.current_high_bid)
-          : null;
-
-        let outcome = 'no_sale';
-        let transactionStatus = 'completed';
-
-        if (winnerId && finalAmount != null) {
-          if (reserveMet) {
-            outcome = 'sold';
-            transactionStatus = 'pending_completion';
-          } else {
-            outcome = 'reserve_not_met';
-            transactionStatus = 'pending_seller_decision';
-          }
-        }
-
-        await this.auctionRepository.endAuction(auction.id);
-        await this.transactionRepository.create({
-          auction_id: auction.id,
-          winner_id: winnerId,
-          seller_id: auction.seller_id,
-          final_amount: finalAmount,
-          outcome,
-          transaction_status: transactionStatus
+        await this.finalizeAuctionEnd(auction, {
+          endReason: 'duration_elapsed',
+          endedByUserId: null
         });
-
-        const auctionLabel = `${auction.make || ''} ${auction.model || ''} ${auction.model_year || ''}`.trim() || 'Vehicle';
-    const seller = await this.userRepository.findWithProfile(auction.seller_id);
-    const winner = winnerId ? await this.userRepository.findWithProfile(winnerId) : null;
-
-        if (outcome === 'sold') {
-          if (winner && winner.email) {
-            await this.emailService.sendAuctionEndedSoldToWinner({
-              to: winner.email,
-              auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
-              amount: finalAmount
-            }).catch((e) => console.error('[TransactionService] sendAuctionEndedSoldToWinner:', e.message));
-          }
-          if (seller && seller.email) {
-            await this.emailService.sendAuctionEndedSoldToSeller({
-              to: seller.email,
-              auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
-              amount: finalAmount
-            }).catch((e) => console.error('[TransactionService] sendAuctionEndedSoldToSeller:', e.message));
-          }
-        } else if (outcome === 'reserve_not_met') {
-          if (seller && seller.email) {
-            await this.emailService.sendAuctionEndedReserveNotMetToSeller({
-              to: seller.email,
-              auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
-              amount: finalAmount
-            }).catch((e) => console.error('[TransactionService] sendAuctionEndedReserveNotMetToSeller:', e.message));
-          }
-          if (winner && winner.email) {
-            await this.emailService.sendAuctionEndedReserveNotMetToWinner({
-              to: winner.email,
-              auction: { make: auction.make, model: auction.model, model_year: auction.model_year }
-            }).catch((e) => console.error('[TransactionService] sendAuctionEndedReserveNotMetToWinner:', e.message));
-          }
-        }
       } catch (err) {
         console.error(`[TransactionService] Error processing ended auction ${auction.id}:`, err.message);
       }
     }
+  }
+
+  buildTransactionOutcome(auction) {
+    const reserveMet =
+      auction.reserve_price != null &&
+      auction.current_high_bid != null &&
+      parseFloat(auction.current_high_bid) >= parseFloat(auction.reserve_price);
+    const winnerId = auction.current_high_bidder_id
+      ? parseInt(auction.current_high_bidder_id, 10)
+      : null;
+    const finalAmount = auction.current_high_bid
+      ? parseFloat(auction.current_high_bid)
+      : null;
+
+    let outcome = 'no_sale';
+    let transactionStatus = 'completed';
+
+    if (winnerId && finalAmount != null) {
+      if (reserveMet) {
+        outcome = 'sold';
+        transactionStatus = 'pending_completion';
+      } else {
+        outcome = 'reserve_not_met';
+        transactionStatus = 'pending_seller_decision';
+      }
+    }
+
+    return { winnerId, finalAmount, outcome, transactionStatus };
+  }
+
+  async sendAuctionEndedNotifications(auction, outcomeData) {
+    const { winnerId, finalAmount, outcome } = outcomeData;
+    const seller = await this.userRepository.findWithProfile(auction.seller_id);
+    const winner = winnerId ? await this.userRepository.findWithProfile(winnerId) : null;
+
+    if (outcome === 'sold') {
+      if (winner && winner.email) {
+        await this.emailService.sendAuctionEndedSoldToWinner({
+          to: winner.email,
+          auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
+          amount: finalAmount
+        }).catch((e) => console.error('[TransactionService] sendAuctionEndedSoldToWinner:', e.message));
+      }
+      if (seller && seller.email) {
+        await this.emailService.sendAuctionEndedSoldToSeller({
+          to: seller.email,
+          auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
+          amount: finalAmount
+        }).catch((e) => console.error('[TransactionService] sendAuctionEndedSoldToSeller:', e.message));
+      }
+    } else if (outcome === 'reserve_not_met') {
+      if (seller && seller.email) {
+        await this.emailService.sendAuctionEndedReserveNotMetToSeller({
+          to: seller.email,
+          auction: { make: auction.make, model: auction.model, model_year: auction.model_year },
+          amount: finalAmount
+        }).catch((e) => console.error('[TransactionService] sendAuctionEndedReserveNotMetToSeller:', e.message));
+      }
+      if (winner && winner.email) {
+        await this.emailService.sendAuctionEndedReserveNotMetToWinner({
+          to: winner.email,
+          auction: { make: auction.make, model: auction.model, model_year: auction.model_year }
+        }).catch((e) => console.error('[TransactionService] sendAuctionEndedReserveNotMetToWinner:', e.message));
+      }
+    }
+  }
+
+  async finalizeAuctionEnd(auction, { endReason = 'duration_elapsed', endedByUserId = null } = {}) {
+    if (!auction || !auction.id) throw new Error('Auction not found.');
+
+    const alreadyHasTransaction = await this.transactionRepository.transactionExists(auction.id);
+    await this.auctionRepository.endAuctionWithReason(auction.id, endReason, endedByUserId);
+    if (alreadyHasTransaction) {
+      return await this.transactionRepository.findByAuctionId(auction.id);
+    }
+
+    const outcomeData = this.buildTransactionOutcome(auction);
+    await this.transactionRepository.create({
+      auction_id: auction.id,
+      winner_id: outcomeData.winnerId,
+      seller_id: auction.seller_id,
+      final_amount: outcomeData.finalAmount,
+      outcome: outcomeData.outcome,
+      transaction_status: outcomeData.transactionStatus
+    });
+    await this.sendAuctionEndedNotifications(auction, outcomeData);
+
+    return await this.transactionRepository.findByAuctionId(auction.id);
+  }
+
+  async endAuctionEarly(auctionId, endedByUserId) {
+    const auction = await this.auctionRepository.findByIdWithVehicle(auctionId);
+    if (!auction) throw new Error('Auction not found.');
+    if (auction.status !== 'active') {
+      throw new Error('Only active auctions can be ended early.');
+    }
+    await this.finalizeAuctionEnd(auction, {
+      endReason: 'seller_ended',
+      endedByUserId
+    });
+    return this.getTransactionSummary(auctionId, auction.seller_id, 'vehicle_owner');
   }
 
   /**

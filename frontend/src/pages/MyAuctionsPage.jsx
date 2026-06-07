@@ -5,6 +5,7 @@ import { Eye, Gavel, Heart, Clock} from 'lucide-react';
 import DashboardNavbar from '../components/DashboardNavbar';
 import PageHeroWithFilters from '../components/PageHeroWithFilters';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ConfirmModal from '../components/ConfirmModal';
 import { apiClient } from '../services/api';
 import '../styles/Dashboard.css';
 import '../styles/MyAuctionsPage.css';
@@ -23,6 +24,12 @@ const SORT_OPTIONS = [
   { value: 'start_soon', label: 'Starting soon' }
 ];
 
+function openAuctionDetailsInNewTab(auctionId) {
+  const path = `/dashboard/owner/auctions/${auctionId}`;
+  const url = `${window.location.origin}${path}`;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
 function formatCountdown(seconds) {
   if (seconds == null || seconds <= 0) return null;
   const d = Math.floor(seconds / 86400);
@@ -37,7 +44,7 @@ function formatCountdown(seconds) {
   return parts.join(' ');
 }
 
-function AuctionCard({ auction, now, onDeleteDraft }) {
+function AuctionCard({ auction, now, onDeleteDraft, onRequestEndAuction, isEnding }) {
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
 
@@ -49,6 +56,10 @@ function AuctionCard({ auction, now, onDeleteDraft }) {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const handleEndAuctionClick = () => {
+    onRequestEndAuction?.(auction.id);
   };
   const [displaySecondsEnd, setDisplaySecondsEnd] = useState(auction.time_remaining_end_seconds);
   const [displaySecondsStart, setDisplaySecondsStart] = useState(auction.time_remaining_start_seconds);
@@ -134,7 +145,7 @@ function AuctionCard({ auction, now, onDeleteDraft }) {
         )}
         {auction.featured && <span className="badge-pill featured">Featured</span>}
       </div>
-      <div className={`my-auction-card-actions ${auction.status === 'draft' ? 'my-auction-card-actions-split' : ''}`}>
+      <div className={`my-auction-card-actions ${(auction.status === 'draft' || auction.status === 'active') ? 'my-auction-card-actions-split' : ''}`}>
         {auction.status === 'draft' ? (
           <>
             <button
@@ -161,11 +172,29 @@ function AuctionCard({ auction, now, onDeleteDraft }) {
           >
             View transaction
           </button>
+        ) : auction.status === 'active' ? (
+          <>
+            <button
+              type="button"
+              className="card-btn-secondary my-auction-card-btn"
+              onClick={handleEndAuctionClick}
+              disabled={isEnding}
+            >
+              {isEnding ? 'Ending…' : 'End Auction'}
+            </button>
+            <button
+              type="button"
+              className="card-btn-primary my-auction-card-btn"
+              onClick={() => openAuctionDetailsInNewTab(auction.id)}
+            >
+              View details
+            </button>
+          </>
         ) : (
           <button
             type="button"
             className="card-btn-primary my-auction-card-btn"
-            onClick={() => navigate(`/dashboard/owner/auctions/${auction.id}`)}
+            onClick={() => openAuctionDetailsInNewTab(auction.id)}
           >
             View details
           </button>
@@ -183,6 +212,8 @@ const MyAuctionsPage = () => {
   const [status, setStatus] = useState('all');
   const [sort, setSort] = useState('newest_first');
   const [now, setNow] = useState(() => new Date());
+  const [endConfirmAuctionId, setEndConfirmAuctionId] = useState(null);
+  const [isEndingAuction, setIsEndingAuction] = useState(false);
 
   const fetchMyAuctions = useCallback(async () => {
     try {
@@ -209,6 +240,30 @@ const MyAuctionsPage = () => {
       toast.error(err?.response?.data?.message || err?.message || 'Failed to delete draft.');
     }
   }, [fetchMyAuctions]);
+
+  const pendingEndAuction = endConfirmAuctionId
+    ? auctions.find((a) => a.id === endConfirmAuctionId)
+    : null;
+  const pendingEndTitle = pendingEndAuction
+    ? [pendingEndAuction.make, pendingEndAuction.model, pendingEndAuction.variant]
+        .filter(Boolean)
+        .join(' ') + (pendingEndAuction.model_year ? ` · ${pendingEndAuction.model_year}` : '')
+    : '';
+
+  const handleConfirmEndAuction = useCallback(async () => {
+    if (!endConfirmAuctionId || isEndingAuction) return;
+    setIsEndingAuction(true);
+    try {
+      await apiClient.post(`/auctions/my-auctions/${endConfirmAuctionId}/end`);
+      toast.success('Auction ended successfully.');
+      setEndConfirmAuctionId(null);
+      fetchMyAuctions();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err?.message || 'Failed to end auction.');
+    } finally {
+      setIsEndingAuction(false);
+    }
+  }, [endConfirmAuctionId, isEndingAuction, fetchMyAuctions]);
 
   useEffect(() => {
     fetchMyAuctions();
@@ -249,7 +304,14 @@ const MyAuctionsPage = () => {
               <section className="my-auctions-list-section">
                 <div className="my-auctions-grid">
                   {auctions.map((a) => (
-                    <AuctionCard key={a.id} auction={a} now={now} onDeleteDraft={handleDeleteDraft} />
+                    <AuctionCard
+                      key={a.id}
+                      auction={a}
+                      now={now}
+                      onDeleteDraft={handleDeleteDraft}
+                      onRequestEndAuction={(id) => setEndConfirmAuctionId(id)}
+                      isEnding={isEndingAuction && endConfirmAuctionId === a.id}
+                    />
                   ))}
                 </div>
               </section>
@@ -257,6 +319,18 @@ const MyAuctionsPage = () => {
           </div>
         </div>
       </main>
+      <ConfirmModal
+        isOpen={endConfirmAuctionId != null}
+        title="End this auction?"
+        message="Bidding will close immediately. This action cannot be undone."
+        detail={pendingEndTitle ? `Listing: ${pendingEndTitle}` : undefined}
+        confirmLabel="End auction"
+        cancelLabel="Cancel"
+        variant="danger"
+        isLoading={isEndingAuction}
+        onClose={() => !isEndingAuction && setEndConfirmAuctionId(null)}
+        onConfirm={handleConfirmEndAuction}
+      />
     </div>
   );
 };

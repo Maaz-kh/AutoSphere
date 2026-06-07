@@ -18,27 +18,27 @@
   padding: 2rem;
 }
 
-.form-section {
-  margin-bottom: 2.5rem;
+.add-service-form .form-section {
+  margin-bottom: var(--form-section-gap);
 }
 
-.form-section:last-of-type {
-  margin-bottom: 1.5rem;
+.add-service-form .form-section:last-of-type {
+  margin-bottom: var(--form-section-gap-last);
 }
 
 .add-service-main .section-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #0c1233;
-  margin: 0 0 1.5rem 0;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
+  padding-bottom: var(--form-section-title-padding-bottom);
+  border-bottom: var(--form-section-title-border);
 }
 
 .add-service-form .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: var(--form-grid-gap);
 }
 
 .add-service-form .form-grid .ui-full-width {
@@ -81,11 +81,11 @@
   margin-bottom: 0;
 }
 
-.subsection-title {
+.add-service-form .subsection-title {
   font-size: 1rem;
   font-weight: 600;
   color: #374151;
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
 }
 
 .part-selector {

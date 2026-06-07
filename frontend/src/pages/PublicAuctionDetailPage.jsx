@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardNavbar from '../components/DashboardNavbar';
 import { apiClient } from '../services/api';
@@ -167,8 +167,12 @@ const PublicAuctionDetailPage = () => {
       <div className="vehicle-details-container">
         <div className="vehicle-details-header">
           <h1 className="vehicle-details-title">{title}</h1>
-          <button className="close-page-btn" onClick={() => navigate(backPath)} aria-label="Close">
-            <X size={24} />
+          <button
+            type="button"
+            className="ui-btn-primary vehicle-details-back-btn"
+            onClick={() => navigate(backPath)}
+          >
+            Back to Auctions
           </button>
         </div>
 
@@ -301,10 +305,6 @@ const PublicAuctionDetailPage = () => {
                 <p className="detail-value" style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{auction.description}</p>
               </div>
             )}
-
-            <div className="vehicle-details-actions vehicle-details-actions--center">
-              <button type="button" className="ui-btn-primary" onClick={() => navigate(backPath)}>Back to Auctions</button>
-            </div>
           </div>
         </div>
       </div>

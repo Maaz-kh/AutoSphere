@@ -3,10 +3,19 @@ const path = require('path');
 
 /**
  * mysql2 SSL options for TiDB Cloud / any MySQL that requires TLS.
- * Set DB_SSL_CA in .env to the path of the downloaded CA bundle (.pem).
+ * Set DB_USE_SSL=false in .env to force a plain (non-SSL) connection (useful for localhost).
+ * Set DB_SSL_CA in .env to the path of the downloaded CA bundle (.pem) when SSL is enabled.
  * Path can be absolute or relative to the backend process cwd (usually backend/).
  */
 function getMysqlSslOptions() {
+  const useSslEnv = process.env.DB_USE_SSL;
+  const sslExplicitlyDisabled =
+    typeof useSslEnv === 'string' && ['false', '0', 'no', 'off'].includes(useSslEnv.trim().toLowerCase());
+
+  if (sslExplicitlyDisabled) {
+    return undefined;
+  }
+
   const caPath = process.env.DB_SSL_CA;
   if (!caPath || !String(caPath).trim()) {
     return undefined;

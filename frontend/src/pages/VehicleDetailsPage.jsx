@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiClient } from '../services/api';
 import '../styles/VehicleDetailsPage.css';
 
@@ -96,12 +96,12 @@ const VehicleDetailsPage = () => {
           <h1 className="vehicle-details-title">
             {vehicle.make} {vehicle.model} {vehicle.variant ? vehicle.variant : ''} {vehicle.model_year ? `· ${vehicle.model_year}` : ''}
           </h1>
-          <button 
-            className="close-page-btn"
-            onClick={() => window.close()}
-            aria-label="Close"
+          <button
+            type="button"
+            className="ui-btn-primary vehicle-details-back-btn"
+            onClick={() => navigate('/dashboard/owner')}
           >
-            <X size={24} />
+            Back to My Vehicles
           </button>
         </div>
 
@@ -218,10 +218,10 @@ const VehicleDetailsPage = () => {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="vehicle-details-actions">
+            <div className="vehicle-details-actions vehicle-details-actions--dual">
               <button
-                className="primary-btn"
+                type="button"
+                className="btn-secondary"
                 onClick={() => {
                   navigate('/dashboard/owner/history', { state: { chassisNumber: vehicle.chassis_number } });
                 }}
@@ -229,7 +229,8 @@ const VehicleDetailsPage = () => {
                 View Service History
               </button>
               <button
-                className="secondary-btn"
+                type="button"
+                className="btn-primary"
                 onClick={() => {
                   navigate('/dashboard/owner/valuation', { state: { vehicle } });
                 }}

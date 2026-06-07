@@ -1,0 +1,243 @@
+# Vehicle Valuation System Configuration
+# Pakistan Used Car Price Prediction System
+
+# Project Settings
+project:
+  name: "AutoSphere Vehicle Valuation"
+  version: "3.0.0"
+  description: "Reference-based car price prediction for Pakistani market"
+
+# Data Paths
+paths:
+  # Raw data
+  raw_data: "data/raw/used_cars_data.csv"
+  
+  # Cleaned data
+  cleaned_data: "data/cleaned/car_data.csv"
+  
+  # Artifacts
+  cascading_data: "data/artifacts/vehicle_cascading_data.json"
+  
+  # Models
+  model_dir: "models/versions"
+  current_model: "models"
+  
+  # Logs
+  log_dir: "logs"
+
+# Scraping Configuration
+scraping:
+  source_url: "https://www.pakwheels.com/used-cars/search/"
+  max_pages: 3000
+  delay_between_requests: 2  # seconds
+  timeout: 30  # seconds
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  
+  # Retry settings
+  max_retries: 3
+  retry_delay: 5  # seconds
+
+# Data Preprocessing
+preprocessing:
+  # Outlier removal (quantiles)
+  outlier_lower_quantile: 0.005
+  outlier_upper_quantile: 0.995
+  
+  # Data quality thresholds
+  max_mileage: 500000  # km
+  min_model_year: 1975
+  max_model_year: 2026
+  min_price: 100000  # PKR
+  max_price: 50000000  # PKR
+  
+  # Missing value handling
+  fill_strategy: "median"  # median, mean, mode
+
+# Model Training Configuration
+training:
+  # Random state for reproducibility
+  random_state: 42
+  
+  # Train-test split
+  test_size: 0.15
+  
+  # Reference price calculation
+  reference_price_quantile: 0.75  # Use 75th percentile of newest cars
+  newest_cars_threshold: 0.75  # Top 25% by model year
+  
+  # Condition priority for reference
+  reference_conditions:
+    - "Excellent/Genuine"
+    - "Minor Touchup"
+  
+  # Cross-validation
+  cv_folds: 5
+  
+  # Feature engineering
+  current_year: 2025
+
+# Model Hyperparameters
+models:
+  xgboost:
+    objective: "reg:squarederror"
+    n_estimators: 500
+    max_depth: 8
+    learning_rate: 0.05
+    subsample: 0.85
+    colsample_bytree: 0.85
+    min_child_weight: 3
+    gamma: 0.1
+    reg_alpha: 0.5
+    reg_lambda: 2.0
+    n_jobs: -1
+  
+  lightgbm:
+    objective: "regression"
+    n_estimators: 500
+    max_depth: 8
+    learning_rate: 0.05
+    subsample: 0.85
+    colsample_bytree: 0.85
+    min_child_samples: 30
+    reg_alpha: 0.5
+    reg_lambda: 2.0
+    n_jobs: -1
+    verbose: -1
+  
+  # Ensemble weights
+  ensemble_weights:
+    xgboost: 0.55
+    lightgbm: 0.45
+
+# Feature Configuration
+features:
+  # Core features (most important)
+  core:
+    - "age"
+    - "age_squared"
+    - "age_cubed"
+    - "mileage"
+    - "mileage_per_year"
+    - "condition_score"
+  
+  # Secondary features
+  secondary:
+    - "is_automatic"
+    - "is_imported"
+    - "engine_capacity"
+    - "major_city"
+  
+  # Categorical features
+  categorical:
+    - "registered_in"
+    - "body_type"
+    - "color"
+  
+  # Engineered features
+  engineered:
+    - "mileage_category"
+    - "high_mileage"
+    - "very_high_mileage"
+    - "engine_category"
+    - "is_premium"
+    - "is_base"
+
+# Condition Scoring
+condition_scores:
+  "Excellent/Genuine": 1.00
+  "Minor Touchup": 0.97
+  "Inner Genuine Only": 0.92
+  "Not Specified": 0.90
+  "Repainted/Painted": 0.88
+  "Accident/Damaged": 0.75
+
+# Market Segments
+market_segments:
+  economy:
+    engine_capacity_max: 1000
+    features_max: 8
+  mid_range:
+    engine_capacity_max: 1600
+    features_max: 12
+  premium:
+    engine_capacity_min: 1600
+    features_min: 12
+
+# Major Cities (for location premium)
+major_cities:
+  - "Lahore"
+  - "Karachi"
+  - "Islamabad"
+  - "Rawalpindi"
+  - "Faisalabad"
+  - "Multan"
+  - "Peshawar"
+  - "Quetta"
+
+# Variant Classification Keywords
+variant_keywords:
+  premium:
+    - "grande"
+    - "altis"
+    - "executive"
+    - "vxr"
+    - "vxl"
+    - "top"
+    - "premium"
+    - "luxury"
+    - "ultimate"
+  base:
+    - "xli"
+    - "gli"
+    - "base"
+    - "standard"
+    - "dx"
+    - "vx"
+    - "lx"
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false  # Set to true only in development
+  log_level: "info"
+  
+  # CORS settings
+  cors:
+    allow_origins:
+      - "*"  # In production, specify exact origins
+    allow_credentials: true
+    allow_methods:
+      - "*"
+    allow_headers:
+      - "*"
+  
+  # Rate limiting (requests per minute)
+  rate_limit: 60
+  
+  # Batch prediction limits
+  max_batch_size: 50
+  
+  # Confidence interval
+  confidence_level: 0.90
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  
+  # File logging
+  file_logging: true
+  log_file: "logs/vehicle_valuation.log"
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+
+# Performance Settings
+performance:
+  # Parallel processing
+  n_jobs: -1  # Use all available cores
+  
+  # Memory optimization
+  low_memory_mode: false
+  chunk_size: 10000  # For large file processing

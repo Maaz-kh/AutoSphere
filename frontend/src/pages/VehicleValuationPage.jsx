@@ -853,8 +853,18 @@ const VehicleValuationPage = () => {
                 minPrice = parsed.min;
                 maxPrice = parsed.max;
               }
+
+              const predictedPrice = Number(prediction.predicted_price);
+              const numericMinPrice = minPrice != null ? Number(minPrice) : null;
+              const numericMaxPrice = maxPrice != null ? Number(maxPrice) : null;
+              const displayPredictedPrice = Number.isFinite(predictedPrice)
+                ? predictedPrice
+                : prediction.predicted_price;
               
-              const hasValidRange = minPrice !== null && maxPrice !== null && prediction.predicted_price;
+              const hasValidRange =
+                Number.isFinite(predictedPrice) &&
+                Number.isFinite(numericMinPrice) &&
+                Number.isFinite(numericMaxPrice);
               
               return (
                 <div className="valuation-results" id="valuation-results">
@@ -862,16 +872,16 @@ const VehicleValuationPage = () => {
                   
                   {hasValidRange ? (
                     <PriceRangeBar
-                      predictedPrice={prediction.predicted_price}
-                      minPrice={minPrice}
-                      maxPrice={maxPrice}
+                      predictedPrice={predictedPrice}
+                      minPrice={numericMinPrice}
+                      maxPrice={numericMaxPrice}
                       formatPrice={formatPrice}
                     />
                   ) : (
                     <div className="results-card">
                       <div className="result-item main-price">
                         <span className="result-label">Predicted Price</span>
-                        <span className="result-value">{formatPrice(prediction.predicted_price)}</span>
+                        <span className="result-value">{formatPrice(displayPredictedPrice)}</span>
                       </div>
                       {prediction.price_range && (
                         <div className="result-item">
@@ -882,7 +892,7 @@ const VehicleValuationPage = () => {
                     </div>
                   )}
 
-                  {/* Additional Information */}
+                  {/* Additional Information (Market Position + Recommendation — commented out)
                   <div className="results-additional-info">
                     {prediction.market_position && (
                       <div className="result-item">
@@ -900,6 +910,7 @@ const VehicleValuationPage = () => {
                       </div>
                     )}
                   </div>
+                  */}
                 </div>
               );
             })()}

@@ -1,0 +1,39 @@
+# Python 3.10+ required
+# Pin scikit-learn to match label_encoders.pkl training version (avoids InconsistentVersionWarning).
+# Core Data Science Libraries
+pandas
+numpy
+scikit-learn==1.6.1
+
+# Machine Learning Models
+xgboost
+lightgbm
+catboost
+
+# Model Persistence
+joblib
+
+# API Framework
+fastapi
+python-multipart
+uvicorn[standard]==0.27.0
+pydantic
+email-validator>=2.0
+bcrypt>=4.0
+PyJWT>=2.8.0
+
+# Data Processing
+python-dateutil
+
+# Configuration
+pyyaml
+python-dotenv
+
+# Logging & Monitoring
+colorama
+
+# Type Hints & Validation
+typing-extensions
+
+# Web scraping
+beautifulsoup4

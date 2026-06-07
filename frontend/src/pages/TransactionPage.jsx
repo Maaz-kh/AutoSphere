@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ChevronLeft, Check, User, FileText, MessageCircle, Send } from 'lucide-react';
+import { Check, User, FileText, MessageCircle, Send } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardNavbar from '../components/DashboardNavbar';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -42,7 +42,7 @@ const TransactionPage = () => {
 
   const isOwner = user?.role === 'vehicle_owner';
   const backPath = isOwner ? '/dashboard/owner/auctions' : '/dashboard/buyer/auctions';
-  const backLabel = isOwner ? 'My Auctions' : 'My Bids';
+  const backLabel = isOwner ? 'Back to My Auctions' : 'Back to My Bids';
 
   const fetchTransaction = async () => {
     try {
@@ -164,10 +164,10 @@ const TransactionPage = () => {
         <DashboardNavbar />
         <main className="transaction-main">
           <div className="layout-page-inner">
-            <section className="dash-card">
+            <section className="dash-card transaction-card transaction-card--empty">
               <p>Unable to load transaction.</p>
-              <button type="button" className="primary-btn" onClick={() => navigate(backPath)}>
-                Back to {backLabel}
+              <button type="button" className="ui-btn-primary" onClick={() => navigate(backPath)}>
+                {backLabel}
               </button>
             </section>
           </div>
@@ -179,28 +179,38 @@ const TransactionPage = () => {
   const vehicleLabel = [data.vehicle?.make, data.vehicle?.model, data.vehicle?.variant].filter(Boolean).join(' ') +
     (data.vehicle?.model_year ? ` · ${data.vehicle.model_year}` : '') || 'Vehicle';
 
+  const checklistKeys = data.checklist ? Object.keys(data.checklist) : [];
+  const checklistComplete =
+    !data.checklist ||
+    checklistKeys.length === 0 ||
+    checklistKeys.every((key) => data.checklist[key] === true);
+
   return (
     <div className="dash-shell">
       <DashboardNavbar />
       <main className="transaction-main">
         <div className="layout-page-inner">
         <div className="transaction-container">
-          <button type="button" className="transaction-back" onClick={() => navigate(backPath)}>
-            <ChevronLeft size={18} />
-            {backLabel}
-          </button>
-
           <section className="dash-card transaction-card">
-            <div className="transaction-header">
-              <h1 className="transaction-title">{vehicleLabel}</h1>
-              <div className="transaction-badges">
-                <span className={`badge-pill outcome-${data.outcome}`}>
-                  {OUTCOME_LABELS[data.outcome] || data.outcome}
-                </span>
-                <span className={`badge-pill status-${data.transaction_status}`}>
-                  {STATUS_LABELS[data.transaction_status] || data.transaction_status}
-                </span>
+            <div className="transaction-card-header-row">
+              <div className="transaction-card-heading">
+                <h1 className="transaction-title">{vehicleLabel}</h1>
+                <div className="transaction-badges">
+                  <span className={`badge-pill outcome-${data.outcome}`}>
+                    {OUTCOME_LABELS[data.outcome] || data.outcome}
+                  </span>
+                  <span className={`badge-pill status-${data.transaction_status}`}>
+                    {STATUS_LABELS[data.transaction_status] || data.transaction_status}
+                  </span>
+                </div>
               </div>
+              <button
+                type="button"
+                className="ui-btn-secondary transaction-header-back"
+                onClick={() => navigate(backPath)}
+              >
+                {backLabel}
+              </button>
             </div>
 
             {data.final_amount != null && (
@@ -265,11 +275,12 @@ const TransactionPage = () => {
                   />
                   <button
                     type="button"
-                    className="primary-btn transaction-messages-send"
+                    className="ui-btn-primary transaction-messages-send"
                     onClick={handleSendMessage}
                     disabled={sendingMessage || !messageInput.trim()}
+                    title={!messageInput.trim() ? 'Enter a message to enable Send' : undefined}
                   >
-                    <Send size={16} />
+                    <Send size={16} aria-hidden />
                     Send
                   </button>
                 </div>
@@ -280,22 +291,22 @@ const TransactionPage = () => {
             {data.can_accept && data.can_decline && (
               <div className="transaction-actions-row">
                 <p className="transaction-prompt">Reserve was not met. Accept or decline the highest bid.</p>
-                <div className="transaction-actions-split">
+                <div className="transaction-actions-bar">
                   <button
                     type="button"
-                    className="primary-btn transaction-btn"
-                    onClick={handleAcceptBid}
-                    disabled={actionLoading}
-                  >
-                    Accept highest bid
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-secondary transaction-btn"
+                    className="ui-btn-secondary transaction-action-btn"
                     onClick={handleDeclineBid}
                     disabled={actionLoading}
                   >
                     Decline
+                  </button>
+                  <button
+                    type="button"
+                    className="ui-btn-primary transaction-action-btn"
+                    onClick={handleAcceptBid}
+                    disabled={actionLoading}
+                  >
+                    Accept highest bid
                   </button>
                 </div>
               </div>
@@ -321,15 +332,26 @@ const TransactionPage = () => {
                   ))}
                 </div>
 
+                {data.can_confirm_complete && checklistKeys.length > 0 && !checklistComplete && (
+                  <p className="transaction-checklist-hint">
+                    Complete every checklist item above before you can confirm this transaction.
+                  </p>
+                )}
+
                 {data.can_confirm_complete && (
                   <div className="transaction-confirm-row">
                     <button
                       type="button"
-                      className="primary-btn transaction-btn"
+                      className="ui-btn-primary transaction-action-btn"
                       onClick={handleConfirmComplete}
-                      disabled={actionLoading}
+                      disabled={actionLoading || !checklistComplete}
+                      title={
+                        !checklistComplete
+                          ? 'Tick all checklist items to enable confirmation'
+                          : undefined
+                      }
                     >
-                      <Check size={18} />
+                      <Check size={18} aria-hidden />
                       Confirm transaction completed
                     </button>
                   </div>

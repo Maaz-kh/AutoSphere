@@ -297,6 +297,31 @@ class AuctionController {
       });
     }
   }
+
+  async endAuctionEarly(req, res) {
+    try {
+      const userId = req.user.userId;
+      const userRole = req.user.role;
+      const auctionId = parseInt(req.params.auctionId, 10);
+      if (isNaN(auctionId) || auctionId < 1) {
+        return res.status(400).json({ success: false, message: 'Invalid auction ID.' });
+      }
+      const summary = await this.auctionService.endAuctionEarly(auctionId, userId, userRole);
+      return res.json({
+        success: true,
+        message: 'Auction ended successfully.',
+        data: summary
+      });
+    } catch (error) {
+      const status =
+        error.message === 'Auction not found.' ? 404 :
+          error.message.includes('Only the seller') ? 403 : 400;
+      return res.status(status).json({
+        success: false,
+        message: error.message || 'Failed to end auction.'
+      });
+    }
+  }
 }
 
 module.exports = new AuctionController();

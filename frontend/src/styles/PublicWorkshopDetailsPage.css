@@ -96,9 +96,12 @@
   }
   
   .wd-section-title {
-    font-weight: 800;
-    color: #111827;
-    margin: 0.25rem 0 0.75rem;
+    font-size: var(--form-section-title-font-size);
+    font-weight: var(--form-section-title-font-weight);
+    color: var(--form-section-title-color);
+    margin: 0 0 var(--form-section-title-spacing-after) 0;
+    padding-bottom: var(--form-section-title-padding-bottom);
+    border-bottom: var(--form-section-title-border);
   }
   
   .wd-services-grid {

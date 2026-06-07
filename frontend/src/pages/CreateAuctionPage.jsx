@@ -638,9 +638,58 @@ const CreateAuctionPage = () => {
                       onChange={handlePhotoInput}
                       className="file-input-hidden"
                     />
-                    {photoFiles.length === 0 ? (
+                    {photoFiles.length > 0 && (
+                      <div className="images-preview-section">
+                        <div className="images-grid">
+                          {photoFiles.map((file, index) => (
+                            <div key={`${file.name}-${index}`} className="image-preview-item">
+                              <img
+                                src={photoPreviewUrls[index]}
+                                alt={`Photo ${index + 1}`}
+                                className="preview-image"
+                              />
+                              <span className="image-number">{index + 1}</span>
+                              <button
+                                type="button"
+                                className="remove-image-btn"
+                                onClick={() => removePhotoFile(index)}
+                                aria-label="Remove image"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {totalPhotoCount >= AUCTION_PHOTOS_MAX ? (
                       <div
-                        className={`auction-photo-dropzone ${photoDragActive ? "drag-active" : ""}`}
+                        className="image-dropzone auction-photo-dropzone-full is-max"
+                        aria-disabled
+                      >
+                        <div className="image-dropzone-inner">
+                          <Upload size={22} strokeWidth={2} className="auction-dropzone-luci" aria-hidden />
+                          <div className="image-dropzone-text">
+                            <div className="image-dropzone-title">Maximum photos reached</div>
+                            
+                          </div>
+                        </div>
+                        <span className="auction-photo-count-chip">
+                          {totalPhotoCount}/{AUCTION_PHOTOS_MAX}
+                        </span>
+                      </div>
+                    ) : (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className={`image-dropzone auction-photo-dropzone-full ${photoDragActive ? "is-dragover" : ""}`}
+                        onClick={() => fileInputRef.current?.click()}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            fileInputRef.current?.click();
+                          }
+                        }}
                         onDragEnter={(e) => {
                           e.preventDefault();
                           setPhotoDragActive(true);
@@ -659,80 +708,17 @@ const CreateAuctionPage = () => {
                           addPhotoFiles(e.dataTransfer.files);
                         }}
                       >
-                        <Upload className="auction-dropzone-icon" aria-hidden />
-                        <p className="auction-dropzone-text">
-                          Drag and drop images here, or
-                        </p>
-                        <label
-                          htmlFor="auction-photo-input"
-                          className="ui-btn-primary auction-photo-select-label"
-                        >
-                          <Upload size={18} aria-hidden />
-                          Select images
-                        </label>
-                        <p className="auction-dropzone-hint">
-                          JPG, PNG or WebP · up to {MAX_PHOTO_SIZE_MB}MB each ·
-                          {AUCTION_PHOTOS_MIN}–{AUCTION_PHOTOS_MAX} photos required to publish
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="images-preview-section">
-                          <div className="images-grid">
-                            {photoFiles.map((file, index) => (
-                              <div key={`${file.name}-${index}`} className="image-preview-item">
-                                <img
-                                  src={photoPreviewUrls[index]}
-                                  alt={`Photo ${index + 1}`}
-                                  className="preview-image"
-                                />
-                                <span className="image-number">{index + 1}</span>
-                                <button
-                                  type="button"
-                                  className="remove-image-btn"
-                                  onClick={() => removePhotoFile(index)}
-                                  aria-label="Remove image"
-                                >
-                                  <X size={16} />
-                                </button>
-                              </div>
-                            ))}
+                        <div className="image-dropzone-inner">
+                          <Upload size={22} strokeWidth={2} className="auction-dropzone-luci" aria-hidden />
+                          <div className="image-dropzone-text">
+                            <div className="image-dropzone-title">Drag & drop</div>
+                            <div className="image-dropzone-subtitle">or click to upload</div>
                           </div>
                         </div>
-                        <div
-                          className={`auction-photo-add-more ${photoDragActive ? "drag-active" : ""}`}
-                          onDragEnter={(e) => {
-                            e.preventDefault();
-                            setPhotoDragActive(true);
-                          }}
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            e.dataTransfer.dropEffect = "copy";
-                          }}
-                          onDragLeave={(e) => {
-                            e.preventDefault();
-                            if (e.currentTarget === e.target) setPhotoDragActive(false);
-                          }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            setPhotoDragActive(false);
-                            addPhotoFiles(e.dataTransfer.files);
-                          }}
-                        >
-                          <span>Drop more images here or </span>
-                          <label
-                            htmlFor="auction-photo-input"
-                            className="ui-btn-secondary auction-photo-select-label"
-                          >
-                            <Upload size={16} aria-hidden />
-                            Add images
-                          </label>
-                          <span className="auction-add-more-count">
-                            {" "}
-                            ({totalPhotoCount} / {AUCTION_PHOTOS_MAX})
-                          </span>
-                        </div>
-                      </>
+                        <span className="auction-photo-count-chip">
+                          {totalPhotoCount}/{AUCTION_PHOTOS_MAX}
+                        </span>
+                      </div>
                     )}
                   </div>
                   {errors.photos && (

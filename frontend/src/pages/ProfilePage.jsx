@@ -324,7 +324,8 @@ const ProfilePage = () => {
                       {editingOwner ? (
                         <>
                           <button
-                            className="secondary-btn"
+                            type="button"
+                            className="ui-btn-secondary"
                             onClick={() => {
                               setEditingOwner(false);
                               setOwnerForm({
@@ -343,7 +344,8 @@ const ProfilePage = () => {
                             Cancel
                           </button>
                           <button
-                            className="primary-btn"
+                            type="button"
+                            className="ui-btn-primary"
                             onClick={handleOwnerSave}
                             disabled={savingOwner}
                           >
@@ -351,7 +353,7 @@ const ProfilePage = () => {
                           </button>
                         </>
                       ) : (
-                        <button className="primary-btn" onClick={() => setEditingOwner(true)}>
+                        <button type="button" className="ui-btn-primary" onClick={() => setEditingOwner(true)}>
                           Edit
                         </button>
                       )}
@@ -368,7 +370,8 @@ const ProfilePage = () => {
                         {editingWorkshop ? (
                           <>
                             <button
-                              className="secondary-btn"
+                              type="button"
+                              className="ui-btn-secondary"
                               onClick={() => {
                                 setEditingWorkshop(false);
                                 setWorkshopForm({
@@ -384,7 +387,8 @@ const ProfilePage = () => {
                               Cancel
                             </button>
                             <button
-                              className="primary-btn"
+                              type="button"
+                              className="ui-btn-primary"
                               onClick={handleWorkshopSave}
                               disabled={savingWorkshop}
                             >
@@ -392,7 +396,7 @@ const ProfilePage = () => {
                             </button>
                           </>
                         ) : (
-                          <button className="primary-btn" onClick={() => setEditingWorkshop(true)}>
+                          <button type="button" className="ui-btn-primary" onClick={() => setEditingWorkshop(true)}>
                             Edit
                           </button>
                         )}

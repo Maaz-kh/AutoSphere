@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { apiClient } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import '../styles/VehicleDetailsPage.css';
@@ -123,7 +123,11 @@ const AuctionDetailsPage = () => {
       <div className="vehicle-details-page">
         <div className="vehicle-details-error">
           <p>Auction not found or you don&apos;t have access.</p>
-          <button type="button" className="card-btn-primary" onClick={() => navigate('/dashboard/owner/auctions')}>
+          <button
+            type="button"
+            className="ui-btn-primary vehicle-details-back-btn"
+            onClick={() => navigate('/dashboard/owner/auctions')}
+          >
             Back to My Auctions
           </button>
         </div>
@@ -153,11 +157,11 @@ const AuctionDetailsPage = () => {
         <div className="vehicle-details-header">
           <h1 className="vehicle-details-title">{title}</h1>
           <button
-            className="close-page-btn"
+            type="button"
+            className="ui-btn-primary vehicle-details-back-btn"
             onClick={() => navigate('/dashboard/owner/auctions')}
-            aria-label="Close"
           >
-            <X size={24} />
+            Back to My Auctions
           </button>
         </div>
 
@@ -338,20 +342,17 @@ const AuctionDetailsPage = () => {
               </div>
             )}
 
-            <div className="vehicle-details-actions">
-              {auction.status === 'draft' && (
+            {auction.status === 'draft' && (
+              <div className="vehicle-details-actions vehicle-details-actions--auction-footer">
                 <button
                   type="button"
-                  className="card-btn-primary"
+                  className="ui-btn-primary"
                   onClick={() => navigate(`/dashboard/owner/auctions/edit/${auction.id}`)}
                 >
                   Edit & Publish
                 </button>
-              )}
-              <button type="button" className="card-btn-primary" onClick={() => navigate('/dashboard/owner/auctions')}>
-                Back to My Auctions
-              </button>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -33,26 +33,26 @@
 /* Scoped base form styles for create/edit auction pages */
 /* Tighter vertical rhythm between sections */
 .create-auction-main .form-section {
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--form-section-gap);
 }
 
 .create-auction-main .form-section:last-of-type {
-  margin-bottom: 0;
+  margin-bottom: var(--form-section-gap-last);
 }
 
 .create-auction-main .section-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #0c1233;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.45rem;
-  border-bottom: 1px solid #e5e7eb;
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
+  padding-bottom: var(--form-section-title-padding-bottom);
+  border-bottom: var(--form-section-title-border);
 }
 
 .create-auction-main .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.25rem;
+  gap: var(--form-grid-gap);
 }
 
 .create-auction-main .form-group {
@@ -214,6 +214,10 @@
 }
 
 @media (max-width: 640px) {
+  .two-col-grid {
+    grid-template-columns: 1fr;
+  }
+
   .duration-start-grid {
     grid-template-columns: 1fr;
   }
@@ -289,6 +293,16 @@
   margin-top: 0.25rem;
 }
 
+/* Edit draft: vehicle as plain text (no input / grey box) */
+.create-auction-main .auction-edit-vehicle-readonly {
+  margin: 0;
+  padding: 0;
+  font-size: var(--form-control-font-size);
+  font-weight: 600;
+  color: var(--form-control-text);
+  line-height: 1.45;
+}
+
 /* Vehicle specifications (read-only, buyer-facing) */
 .vehicle-specs-section {
   background: #f8fafc;
@@ -324,7 +338,7 @@
   font-weight: 500;
 }
 
-/* Auction photos: hidden input + drag-drop zone (aligned with damage detection style) */
+/* Auction photos: hidden input + RegisterVehicle-style image-dropzone tile */
 .file-input-hidden {
   position: absolute;
   width: 0.1px;
@@ -342,72 +356,38 @@
   width: 100%;
 }
 
-.auction-photo-dropzone {
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  transition: border-color 0.2s ease, background 0.2s ease;
-  background: #fafafa;
-}
-
-.auction-photo-dropzone:hover,
-.auction-photo-dropzone.drag-active {
-  border-color: #2563eb;
-  background: #f8fafc;
-}
-
-.auction-dropzone-icon {
-  width: 3rem;
-  height: 3rem;
-  margin: 0 auto 0.75rem;
-  color: #9ca3af;
-}
-
-.auction-dropzone-text {
-  color: #6b7280;
-  margin: 0 0 0.75rem;
-  font-size: 0.9375rem;
-}
-
-.auction-photo-select-label {
-  display: inline-flex;
-  align-items: center;
+.create-auction-main .file-upload-auction .image-dropzone.auction-photo-dropzone-full {
+  height: auto;
+  min-height: 176px;
+  padding: 1.5rem 1rem 1.25rem;
+  flex-direction: column;
   justify-content: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  align-self: center;
+  gap: 0.35rem;
 }
 
-.auction-dropzone-hint {
-  font-size: 0.8125rem;
+.create-auction-main .file-upload-auction .image-dropzone.auction-photo-dropzone-full.is-max {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.88;
+}
+
+.create-auction-main .auction-dropzone-luci {
   color: #9ca3af;
-  margin: 0.85rem 0 0;
+  flex-shrink: 0;
 }
 
-.auction-photo-add-more {
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
-  padding: 0.85rem 1rem;
-  text-align: center;
-  font-size: 0.875rem;
-  color: #6b7280;
-  transition: border-color 0.2s ease, background 0.2s ease;
-  background: #fafafa;
-}
-
-.auction-photo-add-more.drag-active {
-  border-color: #2563eb;
-  background: #f8fafc;
-}
-
-.auction-photo-add-more .auction-photo-select-label {
-  margin-left: 0.35rem;
-}
-
-.auction-add-more-count {
-  color: #6b7280;
-  font-size: 0.875rem;
+.create-auction-main .auction-photo-count-chip {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  background: #fff;
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  line-height: 1.2;
 }
 
 /* Image preview grid – same as Damage Detection (row-wise thumbnails with number + delete) */

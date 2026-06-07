@@ -1,0 +1,19 @@
+# Model weights & training runs
+trained_model/
+*.pt
+*.pth
+
+# Logs
+*.log
+
+# Large reference PDF
+CarDD.pdf
+
+# Python
+__pycache__/
+.venv/
+venv/
+
+# Environment
+.env
+.env.*

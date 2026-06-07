@@ -57,7 +57,7 @@ class UserService {
         const contactPhone = userData.phone_number || null;
         const wsResult = await database.query(
           `INSERT INTO workshops (user_id, name, ntn, contact_phone, address, city, country, latitude, longitude, is_verified)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'verified')`,
           [
             userId,
             userData.business_name,

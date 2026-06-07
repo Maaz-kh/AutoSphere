@@ -18,9 +18,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e5e7eb;
   background: #ffffff;
+}
+
+.vehicle-details-header .vehicle-details-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.vehicle-details-back-btn {
+  flex-shrink: 0;
+  width: auto;
+  white-space: nowrap;
 }
 
 .vehicle-details-title {
@@ -172,12 +184,12 @@
 }
 
 .detail-section-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: var(--form-section-title-font-size);
+  font-weight: var(--form-section-title-font-weight);
+  color: var(--form-section-title-color);
+  margin: 0 0 var(--form-section-title-spacing-after) 0;
+  padding-bottom: var(--form-section-title-padding-bottom);
+  border-bottom: var(--form-section-title-border);
 }
 
 .detail-grid {
@@ -209,7 +221,75 @@
 .vehicle-details-actions {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.75rem;
+}
+
+/* Owner vehicle detail: compact form-style CTAs, right-aligned (matches create/register .btn-*) */
+.vehicle-details-actions--dual {
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.vehicle-details-page .btn-primary,
+.vehicle-details-page .btn-secondary {
+  padding: var(--form-button-padding-y) var(--form-button-padding-x);
+  font-size: var(--form-button-font-size);
+  font-weight: 600;
+  border-radius: var(--form-button-border-radius);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-family: inherit;
+}
+
+.vehicle-details-page .btn-primary {
+  border: 1px solid var(--form-primary-bg);
+  background: var(--form-primary-bg);
+  color: #fff;
+}
+
+.vehicle-details-page .btn-primary:hover:not(:disabled) {
+  background: var(--form-primary-bg-hover);
+  border-color: var(--form-primary-bg-hover);
+}
+
+.vehicle-details-page .btn-secondary {
+  border: 1px solid var(--form-secondary-border);
+  background: var(--form-secondary-bg);
+  color: var(--form-secondary-text);
+}
+
+.vehicle-details-page .btn-secondary:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.vehicle-details-page .vehicle-details-actions--dual .btn-primary,
+.vehicle-details-page .vehicle-details-actions--dual .btn-secondary {
+  flex: 0 1 auto;
+  min-width: 8.5rem;
+  max-width: 11rem;
+  white-space: nowrap;
+}
+
+.vehicle-details-actions--auction-footer {
+  justify-content: flex-start;
+}
+
+.vehicle-details-actions--auction-footer .ui-btn-primary {
+  width: auto;
+}
+
+.vehicle-details-actions .vehicle-details-actions-back {
+  margin-left: auto;
+}
+
+.vehicle-details-actions .ui-btn-primary {
+  width: auto;
 }
 
 .vehicle-details-actions--center {
@@ -306,6 +386,12 @@
 
   .vehicle-details-header {
     padding: 1.25rem 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vehicle-details-back-btn {
+    align-self: flex-end;
   }
 
   .vehicle-details-title {
@@ -323,8 +409,33 @@
     gap: 1rem;
   }
 
-  .vehicle-details-actions {
+  .vehicle-details-actions:not(.vehicle-details-actions--dual) {
     flex-direction: column;
+  }
+
+  .vehicle-details-actions--dual {
+    flex-direction: row;
+  }
+
+  .vehicle-details-actions:not(.vehicle-details-actions--dual) .vehicle-details-actions-back {
+    margin-left: 0;
+  }
+
+  .vehicle-details-actions:not(.vehicle-details-actions--dual) .ui-btn-primary {
+    width: 100%;
+  }
+
+  .vehicle-details-page .vehicle-details-actions--dual {
+    justify-content: flex-end;
+  }
+
+  .vehicle-details-page .vehicle-details-actions--dual .btn-primary,
+  .vehicle-details-page .vehicle-details-actions--dual .btn-secondary {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 calc(50% - 0.25rem);
+    white-space: normal;
+    text-align: center;
   }
 
   .vehicle-details-actions--center {

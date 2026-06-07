@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Data Files (large datasets)
+data/raw/*.csv
+data/raw/*.xlsx
+data/raw/*.json
+data/cleaned/*.csv
+data/artifacts/
+
+# Model Files (large binary files)
+src/models/versions/
+src/models/depreciation_xgb.json
+src/models/depreciation_lgb.pkl
+src/models/label_encoders.pkl
+src/models/model_metadata.json
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Large Files
+*.h5
+*.hdf5
+*.parquet
+
+# CatBoost training output
+catboost_info/

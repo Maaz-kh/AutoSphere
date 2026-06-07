@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+
+node_modules/
+
+blockchain/artifacts/
+blockchain/cache/
+blockchain/typechain-types/

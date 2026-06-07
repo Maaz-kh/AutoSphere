@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { X, Upload } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import DashboardNavbar from "../components/DashboardNavbar";
@@ -34,7 +35,15 @@ const EditAuctionPage = () => {
   });
   const [existingPhotoUrls, setExistingPhotoUrls] = useState([]);
   const [photoFiles, setPhotoFiles] = useState([]);
+  const [photoPreviewUrls, setPhotoPreviewUrls] = useState([]);
+  const [photoDragActive, setPhotoDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const urls = photoFiles.map((f) => URL.createObjectURL(f));
+    setPhotoPreviewUrls(urls);
+    return () => urls.forEach((u) => URL.revokeObjectURL(u));
+  }, [photoFiles]);
 
   useEffect(() => {
     const fetchDraft = async () => {
@@ -89,24 +98,37 @@ const EditAuctionPage = () => {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handlePhotoFiles = (e) => {
-    const files = Array.from(e.target.files || []);
+  const addPhotoFiles = (fileList) => {
+    const incoming = Array.from(fileList || []);
     const maxBytes = MAX_PHOTO_SIZE_MB * 1024 * 1024;
+    const nameOk = (f) =>
+      f.type.startsWith("image/") || /\.(jpe?g|png|webp)$/i.test(f.name);
+
     setPhotoFiles((prev) => {
       const out = [...prev];
-      for (const file of files) {
+      for (const file of incoming) {
         if (existingPhotoUrls.length + out.length >= AUCTION_PHOTOS_MAX) {
           toast.error(`Maximum ${AUCTION_PHOTOS_MAX} photos allowed.`);
           break;
         }
+        if (!nameOk(file)) {
+          toast.error(`${file.name} is not a supported image type.`);
+          continue;
+        }
         if (file.size > maxBytes) {
-          toast.error(`${file.name} exceeds ${MAX_PHOTO_SIZE_MB}MB.`);
+          toast.error(
+            `${file.name} exceeds ${MAX_PHOTO_SIZE_MB}MB. Max ${MAX_PHOTO_SIZE_MB}MB per image.`,
+          );
           continue;
         }
         out.push(file);
       }
       return out;
     });
+  };
+
+  const handlePhotoInput = (e) => {
+    addPhotoFiles(e.target.files);
     e.target.value = "";
   };
 
@@ -234,67 +256,92 @@ const EditAuctionPage = () => {
 
   if (loading || !auction) {
     return (
-      <div className="dash-shell">
+      <div className="dash-shell create-auction-page">
         <DashboardNavbar />
-        <main className="register-vehicle-main create-auction-main">
-          <LoadingSpinner message="Loading draft…" />
+        <main className="create-auction-main">
+          <div className="layout-page-inner">
+            <LoadingSpinner message="Loading draft…" />
+          </div>
         </main>
       </div>
     );
   }
 
-  const vehicleTitle = [vehicle?.make, vehicle?.model, vehicle?.variant].filter(Boolean).join(" ") +
-    (vehicle?.model_year ? ` · ${vehicle.model_year}` : "");
+  /** Single-line read-only summary (edit draft only; vehicle cannot be changed). */
+  const vehicleDisplayLine = (() => {
+    if (!auction) return "—";
+    const seg = [auction.make, auction.model, auction.variant].filter(Boolean).join(" ").trim();
+    const y =
+      auction.model_year != null && auction.model_year !== ""
+        ? ` · ${auction.model_year}`
+        : "";
+    const r = auction.registration_number
+      ? ` — ${auction.registration_number}`
+      : "";
+    const s = `${seg}${y}${r}`.trim();
+    return s || "—";
+  })();
 
   return (
-    <div className="dash-shell">
+    <div className="dash-shell create-auction-page">
       <DashboardNavbar />
-      <main className="register-vehicle-main create-auction-main">
-        <div className="register-vehicle-hero-container">
-          <PageHeroWithFilters
-            title="Edit auction"
-            subtitle="Update your draft and publish when ready."
-            button={{
-              text: "Back to My Auctions",
-              onClick: () => navigate("/dashboard/owner/auctions"),
-            }}
-            filters={[]}
-          />
-        </div>
+      <main className="create-auction-main">
+        <div className="layout-page-inner">
+          <div className="create-auction-hero-container">
+            <PageHeroWithFilters
+              title="Edit auction"
+              subtitle="Update your draft and publish when ready."
+              button={{
+                text: "Back to My Auctions",
+                onClick: () => navigate("/dashboard/owner/auctions"),
+              }}
+              filters={[]}
+            />
+          </div>
 
-        <div className="register-vehicle-form-container">
-          <form
-            className="register-vehicle-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit(true);
-            }}
-          >
+          <div className="create-auction-form-container">
+            <form
+              className="create-auction-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(true);
+              }}
+            >
             <section className="form-section">
-              <h2 className="section-title">Vehicle</h2>
-              <p className="section-hint">Vehicle cannot be changed for this draft.</p>
-              <div className="form-group full-width">
-                <div className="vehicle-specs-grid">
-                  <span className="spec-value" style={{ fontWeight: 600 }}>{vehicleTitle}</span>
-                </div>
-              </div>
-            </section>
-
-            <section className="form-section">
-              <h2 className="section-title">Current odometer (km)</h2>
-              <div className="form-grid">
+              <h2 className="section-title">Vehicle and Odometer reading</h2>
+              <p className="section-hint">
+                The vehicle cannot be updated for this draft. You can change the odometer shown on the listing.
+              </p>
+              <div className="form-grid two-col-grid">
                 <div className="form-group">
+                  <label htmlFor="auction-edit-vehicle-readonly">Your vehicle</label>
+                  <p
+                    id="auction-edit-vehicle-readonly"
+                    className="auction-edit-vehicle-readonly"
+                  >
+                    {vehicleDisplayLine}
+                  </p>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="odometer_km">Current odometer (km)</label>
                   <input
                     type="number"
+                    id="odometer_km"
                     name="odometer_km"
                     value={formData.odometer_km}
                     onChange={handleInputChange}
                     min={vehicleMileage != null ? vehicleMileage : 0}
                     step="1"
-                    placeholder={vehicleMileage != null ? `Min ${vehicleMileage.toLocaleString()} km` : ""}
+                    placeholder={
+                      vehicleMileage != null
+                        ? `Min ${vehicleMileage.toLocaleString()} km`
+                        : ""
+                    }
                     className={errors.odometer_km ? "error" : ""}
                   />
-                  {errors.odometer_km && <span className="field-error">{errors.odometer_km}</span>}
+                  {errors.odometer_km && (
+                    <span className="field-error">{errors.odometer_km}</span>
+                  )}
                 </div>
               </div>
             </section>
@@ -303,17 +350,21 @@ const EditAuctionPage = () => {
               <h2 className="section-title">Description</h2>
               <div className="form-grid">
                 <div className="form-group full-width">
-                  <label htmlFor="description">Vehicle description <span className="required">*</span></label>
+                  <label htmlFor="description">
+                    Vehicle description <span className="required">*</span>
+                  </label>
                   <textarea
                     id="description"
                     name="description"
                     value={formData.description}
                     onChange={handleInputChange}
                     rows={5}
-                    placeholder="Key features, condition, modifications..."
+                    placeholder="Key features, condition, modifications, known issues, reason for selling..."
                     className={errors.description ? "error" : ""}
                   />
-                  {errors.description && <span className="field-error">{errors.description}</span>}
+                  {errors.description && (
+                    <span className="field-error">{errors.description}</span>
+                  )}
                 </div>
               </div>
             </section>
@@ -372,21 +423,22 @@ const EditAuctionPage = () => {
                     ))}
                   </select>
                 </div>
-                {!formData.start_immediate && (
-                  <div className="form-group">
-                    <label htmlFor="start_at">Scheduled start</label>
-                    <input
-                      type="datetime-local"
-                      id="start_at"
-                      name="start_at"
-                      value={formData.start_at}
-                      onChange={handleInputChange}
-                      min={new Date().toISOString().slice(0, 16)}
-                      className={errors.start_at ? "error" : ""}
-                    />
-                    {errors.start_at && <span className="field-error">{errors.start_at}</span>}
-                  </div>
-                )}
+                <div className="form-group">
+                  <label htmlFor="start_at">Scheduled start</label>
+                  <input
+                    type="datetime-local"
+                    id="start_at"
+                    name="start_at"
+                    value={formData.start_at}
+                    onChange={handleInputChange}
+                    min={new Date().toISOString().slice(0, 16)}
+                    disabled={formData.start_immediate}
+                    className={errors.start_at ? "error" : ""}
+                  />
+                  {errors.start_at && (
+                    <span className="field-error">{errors.start_at}</span>
+                  )}
+                </div>
               </div>
               <div className="form-grid two-col-grid checkbox-row">
                 <div className="form-group form-group-checkbox">
@@ -415,53 +467,128 @@ const EditAuctionPage = () => {
             </section>
 
             <section className="form-section">
-              <h2 className="section-title">Photos</h2>
+              <h2 className="section-title">Auction Photos</h2>
               <p className="section-hint">
-                Min {AUCTION_PHOTOS_MIN}, max {AUCTION_PHOTOS_MAX} to publish. You can keep existing and add new.
+                High-quality images, max {MAX_PHOTO_SIZE_MB}MB each. Min {AUCTION_PHOTOS_MIN}, max{" "}
+                {AUCTION_PHOTOS_MAX} to publish. Existing photos stay unless you remove them; you can add more up to
+                the limit.
               </p>
-              {existingPhotoUrls.length > 0 && (
-                <div className="file-list file-preview-list" style={{ marginBottom: 12 }}>
-                  {existingPhotoUrls.map((url, index) => (
-                    <div key={`ex-${index}`} className="file-preview">
-                      <img src={url} alt="" style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 4 }} />
-                      <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>Existing {index + 1}</span>
-                      <button type="button" onClick={() => removeExistingPhoto(index)} className="remove-file-btn">×</button>
-                    </div>
-                  ))}
-                </div>
-              )}
               <div className="form-grid">
                 <div className="form-group full-width">
                   <div className="file-upload-wrapper file-upload-auction">
                     <input
                       ref={fileInputRef}
+                      id="edit-auction-photo-input"
                       type="file"
                       accept=".jpg,.jpeg,.png,.webp"
                       multiple
-                      onChange={handlePhotoFiles}
+                      onChange={handlePhotoInput}
                       className="file-input-hidden"
                     />
-                    <button
-                      type="button"
-                      className="btn-upload-photos"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      Add more photos
-                    </button>
-                    {photoFiles.length > 0 && (
-                      <div className="file-list file-preview-list">
-                        {photoFiles.map((file, index) => (
-                          <div key={index} className="file-preview">
-                            <span>{file.name}</span>
-                            <button type="button" onClick={() => removePhotoFile(index)} className="remove-file-btn">×</button>
+                    {totalPhotoCount > 0 && (
+                      <div className="images-preview-section">
+                        <div className="images-grid">
+                          {existingPhotoUrls.map((url, index) => (
+                            <div key={`ex-${url}-${index}`} className="image-preview-item">
+                              <img
+                                src={url}
+                                alt={`Photo ${index + 1}`}
+                                className="preview-image"
+                              />
+                              <span className="image-number">{index + 1}</span>
+                              <button
+                                type="button"
+                                className="remove-image-btn"
+                                onClick={() => removeExistingPhoto(index)}
+                                aria-label="Remove photo"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                          {photoFiles.map((file, index) => (
+                            <div key={`${file.name}-${index}`} className="image-preview-item">
+                              <img
+                                src={photoPreviewUrls[index]}
+                                alt={`Photo ${existingPhotoUrls.length + index + 1}`}
+                                className="preview-image"
+                              />
+                              <span className="image-number">{existingPhotoUrls.length + index + 1}</span>
+                              <button
+                                type="button"
+                                className="remove-image-btn"
+                                onClick={() => removePhotoFile(index)}
+                                aria-label="Remove image"
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {totalPhotoCount >= AUCTION_PHOTOS_MAX ? (
+                      <div
+                        className="image-dropzone auction-photo-dropzone-full is-max"
+                        aria-disabled
+                      >
+                        <div className="image-dropzone-inner">
+                          <Upload size={22} strokeWidth={2} className="auction-dropzone-luci" aria-hidden />
+                          <div className="image-dropzone-text">
+                            <div className="image-dropzone-title">Maximum photos reached</div>
+                            <div className="image-dropzone-subtitle">
+                              {AUCTION_PHOTOS_MAX} / {AUCTION_PHOTOS_MAX} · JPG, PNG or WebP · up to{" "}
+                              {MAX_PHOTO_SIZE_MB}MB each
+                            </div>
                           </div>
-                        ))}
+                        </div>
+                        <span className="auction-photo-count-chip">
+                          {totalPhotoCount}/{AUCTION_PHOTOS_MAX}
+                        </span>
+                      </div>
+                    ) : (
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        className={`image-dropzone auction-photo-dropzone-full ${photoDragActive ? "is-dragover" : ""}`}
+                        onClick={() => fileInputRef.current?.click()}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            fileInputRef.current?.click();
+                          }
+                        }}
+                        onDragEnter={(e) => {
+                          e.preventDefault();
+                          setPhotoDragActive(true);
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "copy";
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          if (e.currentTarget === e.target) setPhotoDragActive(false);
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          setPhotoDragActive(false);
+                          addPhotoFiles(e.dataTransfer.files);
+                        }}
+                      >
+                        <div className="image-dropzone-inner">
+                          <Upload size={22} strokeWidth={2} className="auction-dropzone-luci" aria-hidden />
+                          <div className="image-dropzone-text">
+                            <div className="image-dropzone-title">Drag & drop</div>
+                            <div className="image-dropzone-subtitle">or click to upload</div>
+                          </div>
+                        </div>
+                        <span className="auction-photo-count-chip">
+                          {totalPhotoCount}/{AUCTION_PHOTOS_MAX}
+                        </span>
                       </div>
                     )}
                   </div>
-                  <p className="file-hint">
-                    {totalPhotoCount} / {AUCTION_PHOTOS_MAX} photos
-                  </p>
                   {errors.photos && <span className="field-error">{errors.photos}</span>}
                 </div>
               </div>
@@ -469,7 +596,9 @@ const EditAuctionPage = () => {
 
             <section className="form-section">
               <h2 className="section-title">Terms</h2>
-              <p className="section-hint">Required when publishing.</p>
+              <p className="section-hint">
+                Required when publishing. You can save as draft without accepting.
+              </p>
               <div className="form-grid">
                 <div className="form-group full-width form-group-checkbox">
                   <label>
@@ -479,15 +608,22 @@ const EditAuctionPage = () => {
                       checked={formData.terms_accepted}
                       onChange={handleInputChange}
                     />
-                    I accept the auction terms and seller responsibilities <span className="required">*</span> (required to publish)
+                    I accept the auction terms and seller responsibilities{" "}
+                    <span className="required">*</span>
                   </label>
-                  {errors.terms_accepted && <span className="field-error">{errors.terms_accepted}</span>}
+                  {errors.terms_accepted && (
+                    <span className="field-error">{errors.terms_accepted}</span>
+                  )}
                 </div>
               </div>
             </section>
 
             <div className="form-actions">
-              <button type="button" onClick={() => navigate("/dashboard/owner/auctions")} className="btn-secondary">
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard/owner/auctions")}
+                className="btn-secondary"
+              >
                 Cancel
               </button>
               <button
@@ -496,13 +632,14 @@ const EditAuctionPage = () => {
                 disabled={loadingSubmit}
                 className="btn-secondary"
               >
-                {loadingSubmit ? "Saving…" : "Save draft"}
+                {loadingSubmit ? "Saving…" : "Save as draft"}
               </button>
               <button type="submit" disabled={loadingSubmit} className="btn-primary">
                 {loadingSubmit ? "Publishing…" : "Publish auction"}
               </button>
             </div>
           </form>
+          </div>
         </div>
       </main>
     </div>
